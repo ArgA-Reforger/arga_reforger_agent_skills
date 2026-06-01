@@ -1,4 +1,4 @@
-# arga_reforger_agent_skills
+# ArgA Reforger agent skills
 
 A family of 44 developer skills for writing Arma Reforger Enforce Script with an LLM — covering the full scripting surface from language basics to multiplayer replication, damage systems, and Workbench plugins.
 
