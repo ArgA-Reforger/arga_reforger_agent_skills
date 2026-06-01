@@ -66,6 +66,15 @@ The following spoke skills cover specific domains. They are loaded alongside thi
 | `reforger-wiki-json-api-struct` | `JsonApiStruct`, `SCR_JsonApiStruct`, `SerializeToJson`, `DeserializeFromJson`, `json struct` | JsonApiStruct encode/decode, file I/O, REST callback payload, error handling |
 | `reforger-wiki-rest-api` | `RestCallback`, `RestContext`, `GET request`, `POST request`, `HTTP header` | RestApi scripting: context, GET/POST requests, async callbacks, lifetime rules |
 | `reforger-wiki-damage-system` | `SCR_DamageManagerComponent`, `DamageType`, `HitZone`, `EDamageType`, `OnDamage` | Damage system hierarchy, logic flow, DamageEffects, SetHealth caveats |
+| `reforger-wiki-damage-effects` | `SCR_DamageEffectComponent`, `damage particle`, `damage sound`, `OnDamageStateChanged`, `DamageEffect` | Visual and audio damage effects tied to entity damage states |
+| `reforger-wiki-scripting-modding` | `modded keyword`, `mod priority`, `mod load order`, `addon`, `modded class override` | modded keyword integration, mod load ordering, addon dependency graph |
+| `reforger-wiki-scripting-example` | `scripting example`, `end-to-end example`, `complete implementation`, `SCR_TW_` | Full end-to-end Enforce Script example: entity + component + game mode |
+| `reforger-wiki-temporary-feature` | `temporary feature`, `feature flag`, `SCR_TemporaryFeature`, `temporary override` | Gating incomplete features behind a runtime flag |
+| `reforger-wiki-best-practices` | `best practices`, `code quality`, `avoid null check omission`, `single responsibility` | Design-level coding guidance: null safety, SRP, encapsulation, mod-friendliness |
+| `reforger-wiki-dos-donts` | `do's and don'ts`, `forbidden pattern`, `anti-pattern`, `scripting pitfall` | Explicit do/don't checklist for common Enforce Script mistakes |
+| `reforger-wiki-performance` | `CallLater`, `GetTickCount`, `performance optimization`, `GC pressure`, `profiling` | Frame budget, deferred calls, allocation avoidance, spatial query throttling |
+| `reforger-wiki-doxygen` | `doxygen comment`, `@param`, `@return`, `@code`, `API documentation` | Doxygen comment syntax and conventions for Enforce Script API docs |
+| `reforger-wiki-workbench-plugin` | `WorkbenchPlugin`, `WorldEditor`, `editor script`, `OnMenuOpened`, `EditorMenu` | Workbench editor plugins: menus, tools, undo/redo, editor-side script utilities |
 
 ## References
 
