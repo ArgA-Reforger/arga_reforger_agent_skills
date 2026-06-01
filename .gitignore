@@ -15,3 +15,8 @@ acme.json
 # Config files
 config.json
 config.json.prod
+
+# gentle-ai
+.atl
+.antigravitycli
+openspec
