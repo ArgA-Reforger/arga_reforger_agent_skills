@@ -60,6 +60,12 @@ The following spoke skills cover specific domains. They are loaded alongside thi
 | `reforger-wiki-event-handlers` | `GetOnPlayerSpawned`, `SCR_BaseGameMode`, `event mask`, `AddEventMask`, `GetGame` | ScriptInvoker getters, EventHandlerManagerComponent, IEntity events |
 | `reforger-wiki-input-manager` | `InputManager`, `AddActionListener`, `RemoveActionListener`, `EActionTrigger`, `GetInputManager` | Scripting input actions and contexts via InputManager |
 | `reforger-wiki-action-manager` | `ActionManager`, `AddAction`, `RemoveAction`, `PerformAction`, `SCR_ActionsManagerComponent` | ActionManager API for context and action state management |
+| `reforger-wiki-multiplayer` | `RplRpc`, `RplChannel`, `RpcAsk_`, `RpcDo_`, `BumpMe`, `JIP`, `Replication.IsServer`, `IsMaster`, `IsProxy` | Multiplayer replication: RPC patterns, authority/proxy/owner model, BumpMe, JIP |
+| `reforger-wiki-rpl-component` | `RplComponent`, `RplProp`, `Replication.BumpMe`, `replication component`, `RplIdentity` | RplComponent / BaseRplComponent API: role queries, ownership transfer, streaming control |
+| `reforger-wiki-json` | `JsonSerializer`, `JsonObjectSerializer`, `JsonLoadFile`, `JsonSaveFile`, `json parsing` | Raw JSON format rules: syntax, data types, file I/O, Enfusion limitations |
+| `reforger-wiki-json-api-struct` | `JsonApiStruct`, `SCR_JsonApiStruct`, `SerializeToJson`, `DeserializeFromJson`, `json struct` | JsonApiStruct encode/decode, file I/O, REST callback payload, error handling |
+| `reforger-wiki-rest-api` | `RestCallback`, `RestContext`, `GET request`, `POST request`, `HTTP header` | RestApi scripting: context, GET/POST requests, async callbacks, lifetime rules |
+| `reforger-wiki-damage-system` | `SCR_DamageManagerComponent`, `DamageType`, `HitZone`, `EDamageType`, `OnDamage` | Damage system hierarchy, logic flow, DamageEffects, SetHealth caveats |
 
 ## References
 
