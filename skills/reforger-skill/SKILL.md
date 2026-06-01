@@ -52,6 +52,14 @@ The following spoke skills cover specific domains. They are loaded alongside thi
 | `reforger-wiki-prefab-data` | `EntityPrefabData`, `GetPrefabData`, `SCR_EntityPrefabData`, `prefab data`, `ComponentData`, `GetComponentData` | Shared prefab data pattern (Class class) |
 | `reforger-wiki-resource-usage` | `ResourceName`, `Resource.Load`, `resource lifetime`, `keep resource reference`, `BaseResourceObject` | Safe resource loading and reference lifetime |
 | `reforger-wiki-serialisation` | `SCR_JsonSaveContext`, `SCR_JsonLoadContext`, `SCR_BinSaveContext`, `SerializationSave`, `SerializationLoad`, `WriteValue`, `ReadValue` | JSON and binary serialisation |
+| `reforger-wiki-entity` | `GenericEntity`, `IEntity`, `CreateEntity`, `SpawnEntityPrefab`, `EntityManager` | Creating and placing scripted entities in World Editor |
+| `reforger-wiki-i-entity` | `IEntity interface`, `QueryEntitiesInSphere`, `FindEntityByName`, `GetChildren`, `GetParent` | IEntity base class API: hierarchy, transforms, component lookup |
+| `reforger-wiki-entity-lifecycle` | `EOnInit`, `EOnFrame`, `EOnDelete`, `SetEventMask`, `EntityEvent`, `ClearEventMask` | Full entity and component lifecycle event sequence |
+| `reforger-wiki-entity-activeness` | `EOnActivate`, `EOnDeactivate`, `ActiveState`, `SetActiveState`, `entity activeness` | FRAME event and entity active-state management (post-0.9.8) |
+| `reforger-wiki-component` | `ScriptComponent`, `GameComponent`, `FindComponent`, `EOnPostInit` | Creating and attaching World Editor components |
+| `reforger-wiki-event-handlers` | `GetOnPlayerSpawned`, `SCR_BaseGameMode`, `event mask`, `AddEventMask`, `GetGame` | ScriptInvoker getters, EventHandlerManagerComponent, IEntity events |
+| `reforger-wiki-input-manager` | `InputManager`, `AddActionListener`, `RemoveActionListener`, `EActionTrigger`, `GetInputManager` | Scripting input actions and contexts via InputManager |
+| `reforger-wiki-action-manager` | `ActionManager`, `AddAction`, `RemoveAction`, `PerformAction`, `SCR_ActionsManagerComponent` | ActionManager API for context and action state management |
 
 ## References
 
