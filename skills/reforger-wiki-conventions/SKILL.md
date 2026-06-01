@@ -1,6 +1,6 @@
 ---
 name: reforger-wiki-conventions
-description: "Trigger: naming conventions, m_, s_, g_, SCR_, TAG_, Allman style, [Attribute], camelCase, PascalCase, getter, setter, member order. Enforce Script code style, naming, and structural conventions."
+description: "Trigger: naming conventions, m_, s_, g_, SCR_, TAG_, Allman style, camelCase, PascalCase, member order. Enforce Script code style, naming, and structural conventions."
 disable-model-invocation: true
 user-invocable: false
 license: MIT
@@ -15,7 +15,6 @@ metadata:
     - "SCR_"
     - "TAG_"
     - "Allman style"
-    - "[Attribute]"
     - "camelCase"
     - "PascalCase"
     - "member order"

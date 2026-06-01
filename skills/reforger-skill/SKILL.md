@@ -37,8 +37,21 @@ The following spoke skills cover specific domains. They are loaded alongside thi
 | `reforger-wiki-values` | `int`, `float`, `bool`, `string`, `vector`, `array`, `map`, `set`, `typename`, `enum`, `const`, `ref` | Types, values, scope, casting |
 | `reforger-wiki-operators` | `&&`, `\|\|`, `<<`, `>>`, `%`, `==`, `!=`, `+=`, bitwise | Operators and precedence |
 | `reforger-wiki-keywords` | `override`, `out`, `inout`, `notnull`, `owned`, `auto`, `new`, `delete`, `thread`, `super`, `vanilla`, `proto`, `native`, `volatile`, `event`, `typedef` | Language keywords |
-| `reforger-wiki-conventions` | naming conventions, `m_`, `s_`, `g_`, `SCR_`, `TAG_`, Allman style, `[Attribute]` | Code style and order conventions |
+| `reforger-wiki-conventions` | naming conventions, `m_`, `s_`, `g_`, `SCR_`, `TAG_`, Allman style, `camelCase`, `PascalCase` | Code style and order conventions |
 | `reforger-wiki-sqf-to-enforce` | SQF, `forEach`, `while`, `switch`, `hint`, migration, Arma 3 | SQF → Enforce Script migration |
+| `reforger-wiki-oop-advanced` | `Cast`, `upcasting`, `downcasting`, `class hierarchy` | Advanced OOP: type casting, class hierarchies, mod load order |
+| `reforger-wiki-arc` | `ARC`, `Managed`, `weak reference`, `memory leak`, `cyclic reference`, `reference counting`, `autoptr` | Automatic Reference Counting memory model |
+| `reforger-wiki-class-template` | `class template`, `generic class`, `<Class T>`, `Cast helper` | Generic / template class syntax |
+| `reforger-wiki-preprocessor-directives` | `#define`, `#ifdef`, `#ifndef`, `#endif`, `#include`, preprocessor | Preprocessor directives |
+| `reforger-wiki-preprocessor-macros` | `__FILE__`, `__LINE__`, debug context macros | Built-in preprocessor macros |
+| `reforger-wiki-script-invoker` | `ScriptInvoker`, `ScriptInvokerVoid`, `ScriptInvokerBase`, `event handler`, `event subscription` | ScriptInvoker event subscription system |
+| `reforger-wiki-base-container` | `BaseContainer`, `GetOwner`, `BaseContainerList`, `BaseContainerTools`, `SCR_BaseContainerTools`, `BaseContainerProps` | BaseContainer data model (Prefab/Config/IEntitySource) |
+| `reforger-wiki-config-object` | `ConfigObject`, `[BaseContainerProps]`, `[Attribute]`, `configRoot`, `NamingConvention`, `uiwidget`, `ParamEnum` | Config Editor decorators and widget reference |
+| `reforger-wiki-config-class` | `config asset`, `config file creation`, `Workbench config`, `editable property`, `SCR_BaseContainerHolder` | Creating a .conf root class and Workbench asset |
+| `reforger-wiki-scripting-conf` | `.conf file`, `UserConfig`, `ResourceName approach`, `Object approach`, `ParamString`, `ParamFloat`, `SCR_ConfigHelperT` | Loading .conf files from script at runtime |
+| `reforger-wiki-prefab-data` | `EntityPrefabData`, `GetPrefabData`, `SCR_EntityPrefabData`, `prefab data`, `ComponentData`, `GetComponentData` | Shared prefab data pattern (Class class) |
+| `reforger-wiki-resource-usage` | `ResourceName`, `Resource.Load`, `resource lifetime`, `keep resource reference`, `BaseResourceObject` | Safe resource loading and reference lifetime |
+| `reforger-wiki-serialisation` | `SCR_JsonSaveContext`, `SCR_JsonLoadContext`, `SCR_BinSaveContext`, `SerializationSave`, `SerializationLoad`, `WriteValue`, `ReadValue` | JSON and binary serialisation |
 
 ## References
 
