@@ -22,7 +22,7 @@ The family uses a **Hub-and-Spoke** architecture:
     │  each loads when its keywords appear     │
     │                                          │
     │  reforger-wiki-arc        (ARC, Managed) │
-    │  reforger-wiki-multiplayer (RplRpc, ...)  │
+    │  reforger-wiki-multiplayer (RplRpc, ...) │
     │  reforger-wiki-component  (EOnPostInit)  │
     │  ...                                     │
     └──────────────────────────────────────────┘
