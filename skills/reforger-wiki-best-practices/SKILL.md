@@ -33,7 +33,7 @@ Load this skill when reviewing Enforce Script code for quality, safety, and mod-
 **Encapsulation**
 - Member variables are `protected` by default. Only expose via getter methods.
 - Never make a member `public` for "convenience" — add a getter.
-- Setters that change replicated state MUST also call `Replication.BumpMe()` — encapsulate this inside the setter.
+- Setters that change replicated state MUST also call `Replication.BumpMe()` only from the **authority**. Guard with: `if (GetRplComponent() && GetRplComponent().IsMaster())` — encapsulate this inside the setter.
 
 **Inheritance vs composition**
 - Prefer composition (FindComponent) over deep inheritance chains.
@@ -86,7 +86,7 @@ void ProcessEntity(IEntity entity)
     dmgMgr.HandleDamage(EDamageType.TRUE, 10.0, null, Instigator.CreateArtificialInstigator());
 }
 
-// Encapsulated setter with replication bump
+// Encapsulated setter with replication bump (authority guard)
 class ARGA_MyComponent : ScriptComponent
 {
     [RplProp(onRplName: "OnActiveChanged")]
@@ -96,7 +96,8 @@ class ARGA_MyComponent : ScriptComponent
     {
         if (m_bActive == active) return;  // no-op — avoid unnecessary BumpMe
         m_bActive = active;
-        Replication.BumpMe();
+        if (GetRplComponent() && GetRplComponent().IsMaster())
+            Replication.BumpMe();
     }
 
     bool IsActive() { return m_bActive; }

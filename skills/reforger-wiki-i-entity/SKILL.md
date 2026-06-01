@@ -1,6 +1,6 @@
 ---
 name: reforger-wiki-i-entity
-description: "Trigger: IEntity interface, QueryEntitiesInSphere, FindEntityByName, GetChildren, GetParent. IEntity base class API reference for Enforce Script."
+description: "Trigger: IEntity interface, QueryEntitiesBySphere, FindEntityByName, GetChildren, GetParent. IEntity base class API reference for Enforce Script."
 disable-model-invocation: true
 user-invocable: false
 license: MIT
@@ -9,7 +9,7 @@ metadata:
   version: "1.0.0"
   triggers:
     - "IEntity interface"
-    - "QueryEntitiesInSphere"
+    - "QueryEntitiesBySphere"
     - "FindEntityByName"
     - "GetChildren"
     - "GetParent"
@@ -88,7 +88,7 @@ entity.ClearEventMask(EntityEvent.FRAME);
 if (!entity || entity.IsDeleted())
     return;
 
-// QueryEntitiesInSphere (called via world, not directly on IEntity)
+// QueryEntitiesBySphere (called via world, not directly on IEntity)
 // See reforger-wiki-component for QueryEntitiesBySphere pattern
 BaseWorld world = entity.GetWorld();
 // world.QueryEntitiesBySphere(origin, radius, callback, ...)

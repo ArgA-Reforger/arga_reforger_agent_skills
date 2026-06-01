@@ -50,7 +50,7 @@ Load this skill when the context uses Enforce Script reserved keywords beyond ba
 - `new ClassName(args)` — allocates and calls the constructor. Returns a strong reference.
 - `delete obj` — destroys the object and sets all references to `null`. CANNOT delete if an external container still holds a reference (throws VM Exception). Remove from arrays/maps before deleting.
 - `auto` — type inference. Avoid: it can silently infer `int` when `float` was intended. Use explicit types.
-- `thread MethodName()` — spawns a script thread from a method. Script threads are cooperative (not OS threads), so member variable access is thread-safe. In-game: use `GetGame().GetCallQueue().CallLater()` instead of `thread`.
+- `thread MethodName()` — spawns a script thread from a method. Script threads are cooperative (not OS threads), so member variable access is thread-safe. In-game: use `GetGame().GetCallQueue().CallLater()` instead of `thread`. **Important**: `thread` spawns a **synchronous cooperative thread** that runs to completion within the same frame tick (or yields). `CallLater()` schedules **asynchronous deferred execution** for a future frame. They are NOT semantically equivalent — choose based on execution model needed.
 - `Sleep(ms)` — suspends the current thread for `ms` milliseconds. Only usable inside a `thread`.
 - `null` — represents an unset object reference. Primitives (`int`, `float`, `bool`, `string`) cannot be `null`.
 

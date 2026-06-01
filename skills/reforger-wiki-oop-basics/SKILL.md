@@ -55,7 +55,7 @@ Load this skill when the context involves defining or inheriting Enforce Script 
 
 **Object Lifecycle**
 - `new` creates an instance. `delete` destroys it and sets all references to `null`.
-- `delete` throws a VM Exception if the object is still referenced by an external container (e.g., an array holds it). Remove from containers first.
+- `delete` throws a VM Exception if the object is referenced in ANY external container (array, map, set) or held as a member variable in another object. Remove ALL references before calling `delete`.
 - ARC (Automatic Reference Counting) manages memory — classes inheriting `Managed` are handled automatically; `autoptr` is redundant in script.
 
 ## Key APIs / Patterns

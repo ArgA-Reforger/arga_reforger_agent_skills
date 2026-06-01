@@ -55,7 +55,7 @@ Load this skill when the context involves migrating SQF code to Enforce Script, 
 5. `_x` → the named element variable in the `foreach` signature.
 6. `hint` and `systemChat` have no direct equivalent — use `Print()` / `PrintFormat()` for logging, or UI API for HUD.
 7. `isServer` → `Replication.IsServer()` (runtime check — no compile-time guards).
-8. `player` global object → obtain the player entity via game API: `IEntity player = SCR_PlayerController.Cast(...)`.
+8. There is no `player` global in Enforce Script. Use: `IEntity player = GetGame().GetPlayerController().GetControlledEntity();`
 9. `while { condition } do {}` → `while (condition) {}`.
 10. `switch (x) do { case 0: {}; }` → `switch (x) { case 0: ...; break; }` — `break` is required in Enforce.
 11. SQF is NOT case-sensitive — Enforce IS. All identifiers and keywords must match exact case.

@@ -104,6 +104,8 @@ class SCR_TW_ItemComponent : ScriptComponent
         return m_OnCollected;
     }
 
+    int GetPoints() { return m_iPoints; }
+
     void Collect()
     {
         // Authority only

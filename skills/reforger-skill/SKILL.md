@@ -53,7 +53,7 @@ The following spoke skills cover specific domains. They are loaded alongside thi
 | `reforger-wiki-resource-usage` | `ResourceName`, `Resource.Load`, `resource lifetime`, `keep resource reference`, `BaseResourceObject` | Safe resource loading and reference lifetime |
 | `reforger-wiki-serialisation` | `SCR_JsonSaveContext`, `SCR_JsonLoadContext`, `SCR_BinSaveContext`, `SerializationSave`, `SerializationLoad`, `WriteValue`, `ReadValue` | JSON and binary serialisation |
 | `reforger-wiki-entity` | `GenericEntity`, `IEntity`, `CreateEntity`, `SpawnEntityPrefab`, `EntityManager` | Creating and placing scripted entities in World Editor |
-| `reforger-wiki-i-entity` | `IEntity interface`, `QueryEntitiesInSphere`, `FindEntityByName`, `GetChildren`, `GetParent` | IEntity base class API: hierarchy, transforms, component lookup |
+| `reforger-wiki-i-entity` | `IEntity interface`, `QueryEntitiesBySphere`, `FindEntityByName`, `GetChildren`, `GetParent` | IEntity base class API: hierarchy, transforms, component lookup |
 | `reforger-wiki-entity-lifecycle` | `EOnInit`, `EOnFrame`, `EOnDelete`, `SetEventMask`, `EntityEvent`, `ClearEventMask` | Full entity and component lifecycle event sequence |
 | `reforger-wiki-entity-activeness` | `EOnActivate`, `EOnDeactivate`, `ActiveState`, `SetActiveState`, `entity activeness` | FRAME event and entity active-state management (post-0.9.8) |
 | `reforger-wiki-component` | `ScriptComponent`, `GameComponent`, `FindComponent`, `EOnPostInit` | Creating and attaching World Editor components |

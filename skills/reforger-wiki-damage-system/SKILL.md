@@ -48,7 +48,7 @@ ExtendedDamageManagerComponent    // engine-side
 
 **Preferred way to force-destroy an entity**
 - Call `HandleDamage` with a "realistic" but sufficient amount of damage rather than max HP true damage.
-- Using `HandleDamage(maxHealth, true)` is a mod-compatibility anti-pattern: a modded entity (e.g. high-health Terminator mod) will be killed even if it should survive, because the damage equals its max HP exactly.
+- Do NOT use incorrect parameter order — the real signature is `HandleDamage(EDamageType type, float damage, ...)`. Passing `(maxHealth, true)` is wrong and a mod-compatibility anti-pattern: a modded entity (e.g. high-health Terminator mod) will be killed even if it should survive.
 - Always think: "could a valid modded entity survive this damage amount?" If no, reconsider the approach.
 
 **DamageEffects (SCR_ExtendedDamageManagerComponent only)**

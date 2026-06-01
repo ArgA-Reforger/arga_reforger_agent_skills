@@ -45,6 +45,7 @@ Load this skill when writing or reviewing multiplayer replication code: RPC meth
 - After changing a `[RplProp]` property on the authority, call `Replication.BumpMe()` — without it the change is NOT broadcast.
 - `onRplName` callback runs on proxies (including JIP proxies) but NEVER on the authority.
 - Do NOT call `Replication.BumpMe()` speculatively — only call it when a property was actually modified.
+- Note: `RplRcver.Broadcast` runs on all **proxy** machines. If the local machine is both authority AND owner, the RPC does NOT run locally — the authority must call the underlying logic directly if needed.
 
 **RplSave / RplLoad**
 - Override `RplSave(ScriptBitWriter)` on the authority to write custom streaming data.
@@ -124,7 +125,7 @@ override bool RplLoad(ScriptBitReader reader)
 |---|---|---|---|
 | `RplRcver.Server` | runs locally | dropped | runs locally |
 | `RplRcver.Owner` | runs locally if authority is owner | dropped | runs locally |
-| `RplRcver.Broadcast` | runs on all proxies, NOT locally | dropped (no proxy on other machines) | runs locally |
+| `RplRcver.Broadcast` | runs on all **proxy** machines, NOT locally on the authority | dropped (no proxy on other machines) | does NOT run locally |
 
 ## References
 

@@ -30,7 +30,7 @@ Load this skill when the context involves memory ownership (`ref`/weak reference
 
 **Strong vs. Weak References**
 - `ref ClassName m_Member;` → strong reference: increments ARC counter; object cannot be null during the holder's lifetime unless explicitly `delete`d.
-- `ClassName m_Member;` (no `ref`) → weak reference: does NOT increment counter; object MAY become null at any time if all strong references are released.
+- `ClassName m_Member;` (no `ref`) → weak reference: does NOT increment counter; object MAY become null at any time if all strong references are released. This applies **only** to member variables of class types that inherit from `Managed`. Does NOT apply to primitives (`int`, `float`, `bool`, etc.) or non-Managed value types.
 - Weak references REQUIRE null-checking before use — never dereference without a guard.
 
 **Collections and ref**

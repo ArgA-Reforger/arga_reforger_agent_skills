@@ -58,7 +58,7 @@ Load this skill when writing, reviewing, or optimising Enforce Script code for r
 - For log/debug messages in hot paths: guard with `#ifdef DEVELOPER` so they compile out in release.
 
 **Spatial queries**
-- `QueryEntitiesInSphere` / `QueryEntitiesByOBB` iterate spatial index — cost depends on entity density.
+- `QueryEntitiesBySphere` / `QueryEntitiesByOBB` iterate spatial index — cost depends on entity density.
 - Throttle spatial queries to no more than a few times per second unless physics accuracy requires it.
 - Cache query results when the answer is unlikely to change between frames.
 
@@ -118,7 +118,7 @@ class ARGA_QueryComponent : ScriptComponent
     void QueryNearby(vector origin, float radius)
     {
         m_aQueryResults.Clear();  // reuse allocation
-        GetGame().GetWorld().QueryEntitiesInSphere(origin, radius, OnEntityFound, EQueryEntitiesFlags.ALL);
+        GetGame().GetWorld().QueryEntitiesBySphere(origin, radius, OnEntityFound, EQueryEntitiesFlags.ALL);
     }
 
     protected bool OnEntityFound(IEntity entity)

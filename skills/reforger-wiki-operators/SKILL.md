@@ -39,7 +39,7 @@ Load this skill when the context involves Enforce Script operator usage, operato
 - Confusing `=` with `==` inside `if` conditions is a compilation error in Enforce Script (unlike C).
 
 **Arithmetic**
-- Integer division floors: `5 / 3 = 1` (not 1.667). Mix one `float` operand to get float result: `5 / 3.0 = 1.666...`
+- Integer division truncates toward zero: `5 / 3 = 1`, `-5 / 3 = -1` (NOT -2). This differs from mathematical floor for negative values. Mix one `float` operand to get float result: `5 / 3.0 = 1.666...`
 - `%` (modulo) applies to `int` only. For `float` modulo use `Math.Repeat()`.
 - Pre-increment (`++i`) returns the incremented value. Post-increment (`i++`) returns the original value before increment.
 
@@ -55,7 +55,7 @@ Load this skill when the context involves Enforce Script operator usage, operato
 
 **Bitwise**
 - `&` — bitwise AND, `|` — bitwise OR, `~` — bitwise NOT (inverts all bits).
-- `<<` — left shift (multiply by power of 2), `>>=` and `>>=` — right shift.
+- `<<` — left shift (multiply by power of 2), `>>` — right shift, `<<=` — left shift-assign, `>>=` — right shift-assign.
 - BEWARE of sign extension with `>>` on negative integers: `0x80000000 >> 8 = 0xFF800000` (sign bit fills from left).
 
 **String Concatenation**

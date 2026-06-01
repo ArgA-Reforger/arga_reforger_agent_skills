@@ -43,8 +43,8 @@ Load this skill when creating or editing a World Editor component class — any 
 
 **World Queries**
 - To find nearby entities: `owner.GetWorld().QueryEntitiesBySphere(origin, radius, callback, null, ...)`.
-- The callback signature is `bool CallbackMethod(IEntity e)` — return `true` to continue querying, `false` to stop.
-- Use `Cast` to filter by type inside the callback.
+- The callback signature is `bool CallbackMethod(IEntity e)` — return `true` to continue querying, `false` to stop immediately.
+- Use `Cast` to filter by type inside the callback. Returning `false` on a non-match will abort the entire query — only return `false` to deliberately stop iteration early. For "find all matching" intent, always return `true`.
 
 **GetOwner()**
 - Inside a component method, `GetOwner()` returns the owning `IEntity`. Do NOT store the owner as a member — use `GetOwner()` when needed.
@@ -88,10 +88,10 @@ class ARGA_ExampleComponent : ScriptComponent
     // Query callback — return true to continue, false to stop
     protected bool OnQueryEntity(IEntity e)
     {
-        if (!e || !ARGA_SomeClass.Cast(e))
-            return false;
-        m_aNearbyEntities.Insert(e);
-        return true;
+        ARGA_SomeClass sc = ARGA_SomeClass.Cast(e);
+        if (sc)
+            m_aNearbyEntities.Insert(sc);
+        return true;  // always continue iterating
     }
 
     override void EOnFrame(IEntity owner, float timeSlice)
