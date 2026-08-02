@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "SCR_DamageManagerComponent"
     - "DamageType"
@@ -40,6 +40,12 @@ ExtendedDamageManagerComponent    // engine-side
 3. Hit zone passes damage to parent hit zones.
 4. If `DamageState` did not change → exit. If it changed → hit zone fires `OnDamageStateChanged`, then manager fires its own `OnDamageStateChanged`.
 
+**CORRECTED signatures (verified against `scripts/GameCode/Components/SCR_DamageManagerComponent.c`, Reforger_1.6.0.119)**
+- `OnDamage` does NOT take 6 separate parameters. The real override signature is a single context object: `override protected void OnDamage(notnull BaseDamageContext damageContext)`. `BaseDamageContext` (`scripts/Game/generated/Damage/BaseDamageContext.c`) exposes the fields: `damageType` (`EDamageType`), `damageValue` (`float`), `hitEntity` (`IEntity`), `colliderID` (`int`), `struckHitZone` (`HitZone`), `damageSource` (`IEntity`), `instigator` (`ref Instigator`), `material` (`GameMaterial`), `hitPosition`/`hitDirection`/`hitNormal`/`impactVelocity` (`vector`), `boneIndex` (`int`), `damageEffect` (`ref BaseDamageEffect`).
+- `OnDamageStateChanged` parameter order and count were wrong. The real override signature is: `protected override void OnDamageStateChanged(EDamageState newState, EDamageState previousDamageState, bool isJIP)` — note `newState` comes FIRST (not `previousState`), and there is a third `isJIP` bool parameter that was missing entirely.
+- The ScriptInvoker getters for damage events are confirmed to live directly on `SCR_DamageManagerComponent`: `GetOnDamage()`, `GetOnDamageStateChanged()`, `GetOnDamageOverTimeAdded()`, `GetOnDamageOverTimeRemoved()` — NOT on `EventHandlerManagerComponent` (see `reforger-wiki-event-handlers`, which previously claimed otherwise).
+- This skill's own References section notes it targets "Reforger version 1.2.0". The signatures above are from the 1.6.0.119 snapshot in this repo — the API evidently changed between those versions (context-object refactor of `OnDamage`, added `isJIP` parameter). Treat 1.2.0-era signatures as outdated for any current project.
+
 **SetHealth — use sparingly**
 - `HitZone.SetHealth(value)` changes HP directly without going through the damage logic flow. No instigator, no `OnDamage` path.
 - Only `OnHealthSet` and `OnDamageStateChanged` are called when using `SetHealth`.
@@ -48,7 +54,10 @@ ExtendedDamageManagerComponent    // engine-side
 
 **Preferred way to force-destroy an entity**
 - Call `HandleDamage` with a "realistic" but sufficient amount of damage rather than max HP true damage.
-- Do NOT use incorrect parameter order — the real signature is `HandleDamage(EDamageType type, float damage, ...)`. Passing `(maxHealth, true)` is wrong and a mod-compatibility anti-pattern: a modded entity (e.g. high-health Terminator mod) will be killed even if it should survive.
+- CORRECTED signature (verified against `scripts/Game/generated/Components/DamageManagerComponent.c:74` and `scripts/Game/generated/HitZone/HitZone.c:67`): there is no single `HandleDamage(EDamageType type, float damage, ...)` overload on the damage manager. There are two different real overloads on two different classes:
+  - `DamageManagerComponent.HandleDamage(notnull BaseDamageContext damageContext)` — context-object form, same pattern as `OnDamage`.
+  - `HitZone.HandleDamage(float damage, int damageType, IEntity instigator)` — note the order is `(damage, damageType, instigator)`, and `damageType` is passed as `int`.
+  - Passing `(maxHealth, true)` to either is wrong regardless of exact signature, and remains a mod-compatibility anti-pattern: a modded entity (e.g. high-health Terminator mod) will be killed even if it should survive.
 - Always think: "could a valid modded entity survive this damage amount?" If no, reconsider the approach.
 
 **DamageEffects (SCR_ExtendedDamageManagerComponent only)**
@@ -66,34 +75,40 @@ ExtendedDamageManagerComponent    // engine-side
 ## Key APIs / Patterns
 
 ```enforce
-// Override OnDamage in SCR_DamageManagerComponent subclass
-override void OnDamage(
-    EDamageType type,
-    float damage,
-    HitZone pHitZone,
-    notnull Instigator instigator,
-    vector hitPos,
-    float speed)
+// Override OnDamage in SCR_DamageManagerComponent subclass — single context object, not 6 params
+override protected void OnDamage(notnull BaseDamageContext damageContext)
 {
     // Always call super to preserve base behaviour
-    super.OnDamage(type, damage, pHitZone, instigator, hitPos, speed);
+    super.OnDamage(damageContext);
 
-    // Custom logic after base damage is applied
+    // Custom logic after base damage is applied, using fields on the context:
+    // damageContext.damageType, damageContext.damageValue, damageContext.struckHitZone,
+    // damageContext.instigator, damageContext.hitPosition, etc.
 }
 
-// Override OnDamageStateChanged
-override void OnDamageStateChanged(EDamageState previousState, EDamageState newState)
+// Override OnDamageStateChanged — newState comes FIRST, plus an isJIP flag
+protected override void OnDamageStateChanged(EDamageState newState, EDamageState previousDamageState, bool isJIP)
 {
-    super.OnDamageStateChanged(previousState, newState);
+    super.OnDamageStateChanged(newState, previousDamageState, isJIP);
     // React to state transition (e.g. play death animation)
+    // isJIP is true when this callback fires because a Join-In-Progress client
+    // is catching up to the current state, not because damage just happened
 }
 
 // Bad: direct SetHealth to kill — bypasses OnDamage, no instigator
 // pHitZone.SetHealth(0);  // AVOID unless you specifically need to bypass the flow
 
-// Better: HandleDamage with a realistic amount
+// Better: HandleDamage with a realistic amount — context-object form on the manager
 // Ensure the amount is "survivable by a modded entity" in principle
-GetDamageManager().HandleDamage(EDamageType.TRUE, sufficientDamage, hitZone, instigator);
+BaseDamageContext ctx = new BaseDamageContext();
+ctx.damageType = EDamageType.TRUE;
+ctx.damageValue = sufficientDamage;
+ctx.struckHitZone = hitZone;
+ctx.instigator = instigator;
+GetDamageManager().HandleDamage(ctx);
+
+// Alternative: HitZone-level overload takes (damage, damageType, instigator) — note the order
+hitZone.HandleDamage(sufficientDamage, EDamageType.TRUE, instigatorEntity);
 
 // Get the damage manager from an entity
 SCR_DamageManagerComponent dmgMgr =
@@ -107,6 +122,6 @@ if (!dmgMgr) return;
 
 ## References
 
-- PDF: `Damage System – Arma Reforger - Bohemia Interactive Community.pdf`
+- PDF: `Damage System – Arma Reforger - Bohemia Interactive Community.pdf` — targets Reforger version 1.2.0; several signatures in that document are now outdated (see corrections above).
+- Doxygen coverage gap: this Doxygen build only documents the generic Enfusion engine (`Core`/`GameLib`/`WorkbenchCommon`), not the Arma Reforger game-specific layer (`Game`/`GameCode`) where `SCR_DamageManagerComponent` lives. Verified instead against raw source: `scripts/GameCode/Components/SCR_DamageManagerComponent.c`, `scripts/Game/generated/Damage/BaseDamageContext.c`, `scripts/Game/generated/Components/DamageManagerComponent.c`, `scripts/Game/generated/HitZone/HitZone.c` (all from the Reforger_1.6.0.119 snapshot, the only one in this repo with the full `Game/`/`GameCode/` tree).
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Damage_System`
-- Targets Reforger version 1.2.0 (as stated in the official document)

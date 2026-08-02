@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "ScriptComponent"
     - "GameComponent"
@@ -117,4 +117,5 @@ if (!comp)
 ## References
 
 - PDF: `Create a Component – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (verified accurate, no bugs found): `OnPostInit(IEntity owner)` confirmed on `ScriptComponent` (`class_script_component.html`); `QueryEntitiesBySphere(vector center, float radius, QueryEntitiesCallback addEntity, QueryEntitiesCallback filterEntity = null, EQueryEntitiesFlags flags = ...)` confirmed on `BaseWorld` (`_base_world_8c_source.html`) — matches this skill's usage.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Create_a_Component`

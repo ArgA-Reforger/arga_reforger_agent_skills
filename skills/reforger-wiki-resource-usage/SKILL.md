@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "ResourceName"
     - "Resource.Load"
@@ -100,4 +100,5 @@ static Managed CreateInstanceFromPrefab(ResourceName resourceName)
 ## References
 
 - PDF: `Resource Usage – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (verified accurate, no bugs found): `class Resource : Managed` with `GetResource()` returning `BaseResourceObject`, `IsValid()`, and static `Load(ResourceName name)` all confirmed in `_resource_8c_source.html` — matches this skill's usage exactly.
 - See also: `reforger-wiki-base-container` (BaseContainer model), `reforger-wiki-arc` (ARC memory safety, weak references), `reforger-wiki-scripting-conf` (loading .conf files)

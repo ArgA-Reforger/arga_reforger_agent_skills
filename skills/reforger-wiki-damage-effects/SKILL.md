@@ -1,108 +1,102 @@
 ---
 name: reforger-wiki-damage-effects
-description: "Trigger: SCR_DamageEffectComponent, damage particle, damage sound, OnDamageStateChanged, DamageEffect. Visual and audio damage effects tied to entity damage states."
+description: "Trigger: DamageEffect, SCR_DamageEffect, OnEffectAdded, OnEffectApplied, OnEffectRemoved, HandleConsequences, ApplyEffect. Data-driven damage effect objects (bleeding, fire, poison, explosions, etc.) managed by SCR_ExtendedDamageManagerComponent — NOT a standalone visual/audio component."
 disable-model-invocation: true
 user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "2.0.0"
   triggers:
-    - "SCR_DamageEffectComponent"
-    - "damage particle"
-    - "damage sound"
-    - "OnDamageStateChanged"
     - "DamageEffect"
+    - "SCR_DamageEffect"
+    - "OnEffectAdded"
+    - "OnEffectApplied"
+    - "OnEffectRemoved"
+    - "HandleConsequences"
+    - "ApplyEffect"
 ---
 
 ## Activation Contract
 
-Load this skill when implementing or reviewing visual and audio feedback for entity damage states: particle effects on damage, sound triggers on state change, `SCR_DamageEffectComponent` configuration, or any `DamageEffect` subclass. Do not activate for gameplay damage logic — use `reforger-wiki-damage-system` for that.
+Load this skill when implementing or reviewing `DamageEffect`/`SCR_DamageEffect` subclasses (bleeding, poison, fire, explosions, collisions, etc.) managed through `SCR_ExtendedDamageManagerComponent`. Do not activate for the core damage-application flow (`OnDamage`, `HandleDamage`, hit zones) — use `reforger-wiki-damage-system` for that.
 
 ## Hard Rules
 
-**Separation of concerns**
-- `SCR_DamageEffectComponent` handles VISUAL and AUDIO feedback only — it does NOT apply damage.
-- Damage logic lives in `SCR_DamageManagerComponent` (see `reforger-wiki-damage-system`). Never mix the two.
-- Effects are data-driven: define them in prefab attributes, not in code.
+**MAJOR CORRECTION (v2.0.0) — verified against real source, not the previous version of this skill**
 
-**DamageEffect class hierarchy**
+The previous version of this skill described a `SCR_DamageEffectComponent` class with subtypes `SCR_ParticleDamageEffect`/`SCR_SoundDamageEffect`/`SCR_LightDamageEffect`, and lifecycle callbacks `OnActivate(IEntity, EDamageState)`/`OnDeactivate(IEntity)`. **None of this exists.** Verified two ways:
+- A full filename search across the entire `Game`/`GameCode` source tree (Reforger_1.6.0.119 snapshot) found zero files matching `SCR_DamageEffectComponent`, `SCR_ParticleDamageEffect`, `SCR_SoundDamageEffect`, or `SCR_LightDamageEffect`.
+- Cross-checked against `arexplorer.zeroy.com` (indexes `Game`/`GameCode`, current version 1.7.0.54) — same result.
+
+**Real class hierarchy** (verified: `scripts/Game/generated/DamageEffects/BaseDamageEffect.c`, `scripts/Game/Damage/DamageEffects/BaseDamageEffects/SCR_DamageEffect.c`, and the real concrete subclass folders):
 ```
-DamageEffect                        // base class — do not subclass directly without reading docs
-  SCR_DamageEffect                  // script-side base — extend this for custom effects
-    SCR_ParticleDamageEffect        // particle-based visual effect on damage
-    SCR_SoundDamageEffect           // sound played on damage state change
-    SCR_LightDamageEffect           // dynamic light on damaged entities (e.g. fire glow)
+BaseDamageEffect : ScriptAndConfig          // engine-generated base
+  SCR_DamageEffect : BaseDamageEffect       // script-side base — extend this for custom effects
+    // BaseDamageEffects/ — organized by TIMING, not by visual/audio type:
+    SCR_DotDamageEffect, SCR_InstantDamageEffect, SCR_PersistentDamageEffect
+    // CharacterDamageEffects/ — character-specific gameplay effects:
+    SCR_BleedingDamageEffect, SCR_FallDamageEffect, SCR_PoisonDamageEffect,
+    SCR_BandageDamageEffect, SCR_MorphineDamageEffect, SCR_SalineDamageEffect,
+    SCR_TourniquetDamageEffect, SCR_DrowningDamageEffect, SCR_AnimatedFallDamageEffect, ...
+    // DamageEffectSources/ — damage-cause-specific effects:
+    SCR_ExplosionDamageEffect, SCR_MeleeDamageEffect, SCR_CollisionDamageEffect,
+    SCR_FragmentationDamageEffect, SCR_MuzzleBlastDamageEffect, SCR_ConcussionDamageEffect, ...
 ```
+There is no dedicated "particle" or "sound" subclass family — visual/audio feedback is implemented per concrete effect (or on a shared evaluator), not by a fixed 3-way split.
 
-**State-driven activation**
-- Effects are bound to `EDamageState` transitions: `UNDAMAGED`, `DAMAGED`, `DESTROYED`.
-- Each `DamageEffect` entry declares which `EDamageState` activates it.
-- `OnDamageStateChanged` on the component fires when the state transitions — effects react to this callback, NOT to individual hit events.
-- Do NOT trigger particles or sounds directly in `OnDamage`; use the state machine.
+**Real API on `BaseDamageEffect`** (verified in source):
+- `ApplyEffect(SCR_ExtendedDamageManagerComponent dmgManager)` — applies the effect. `InstantDamageEffect`s apply as soon as they're added; `PersistentDamageEffect`s only apply when `ApplyEffect()` is explicitly called. This call is automatically replicated (triggers `Save`).
+- `GetTotalDamage()`, `GetDamageType()`, `GetInstigator()` (`notnull Instigator`), `GetAffectedHitZone()`.
+- `SetDamageType(EDamageType)`, `SetInstigator(notnull Instigator)`, `SetAffectedHitZone(notnull HitZone)` — only valid before the effect is added to a manager; check `IsValueChangeAllowed()` first, changing these after adding desyncs replication.
+- `IsProxy()` — whether this is a proxy-side instance.
 
-**Particle effect rules**
-- `SCR_ParticleDamageEffect` requires a valid particle `ResourceName` (`m_ParticleEffect`).
-- The particle is spawned at the entity origin by default; override `m_vOffset` to shift it relative to the entity.
-- Particle lifetime is managed by the effect — do NOT manually delete the particle object.
-- Use `m_bLoop` for continuous effects (smoke, fire); leave it false for one-shot hit flashes.
+**Real callbacks to override — NOT `OnActivate`/`OnDeactivate`**:
+- `HijackDamageEffect(dmgManager)` returns `bool` — return `true` to intercept/block the effect from being added/applied (any modifications you make still persist).
+- `OnEffectAdded(dmgManager)` — fires when added to the manager.
+- `OnEffectApplied(dmgManager)` — fires when applied.
+- `HandleConsequences(dmgManager, evaluator)` — called from `ApplyEffect`; prefer implementing consequences on the `evaluator` (`DamageEffectEvaluator`) when possible, for reuse across effects.
+- `OnEffectRemoved(dmgManager)` — fires on removal.
+- `OnDiag(dmgManager)` — writes debug text to the Diag Menu when effect diagnostics are enabled.
+- `Save(ScriptBitWriter w)` / `Load(ScriptBitReader r)` — DamageEffects CANNOT use `[RplProp]`/RPCs, so replication of an effect's state goes through these two methods instead. `SCR_DamageEffect` already overrides both to (de)serialize the damage type (skipping the write when it equals `GetDefaultDamageType()`, which defaults to `EDamageType.TRUE`) — call `super.Save(w)`/`super.Load(r)` first in your own overrides.
 
-**Sound effect rules**
-- `SCR_SoundDamageEffect` plays a sound signal via `SoundComponent` on the entity.
-- `m_sSoundEvent` must match an exact FMOD event path configured for the entity.
-- Sounds respect the entity's audio context — no direct `SoundSystem` calls inside `SCR_SoundDamageEffect`.
-
-**Replication**
-- `SCR_DamageEffectComponent` listens for `OnDamageStateChanged` which fires both on authority and on proxies after replication.
-- Effects spawned client-side (particles, sounds) are NOT replicated — each machine spawns its own local effect.
-- Never rely on an effect being present on the authority machine to infer client state.
-
-**Prefab workflow**
-1. Add `SCR_DamageEffectComponent` to the entity prefab in World Editor.
-2. In the component attributes, configure the `Effects` array.
-3. Each array element is a `DamageEffect` subtype with its specific fields.
-4. The engine calls `OnDamageStateChanged` and the component iterates its effects array automatically.
+**Ownership and management**
+- Effects are added to and driven by `SCR_ExtendedDamageManagerComponent` (see `reforger-wiki-damage-system`) — there is no separate standalone "effects component" on the entity.
+- Effects are data-driven via prefab/config attributes where the concrete project wires them up, but the exact attribute schema was not independently re-derived in this pass — verify against a real prefab or `SCR_ManagedDamageEffectsContainer`/`SCR_BatchedDamageEffects` (`scripts/Game/Systems/DamageEffects/`) before assuming a specific `[Attribute]` layout.
 
 ## Key APIs / Patterns
 
 ```enforce
-// Listening to damage state changes from outside the component
-SCR_DamageEffectComponent effectComp =
-    SCR_DamageEffectComponent.Cast(entity.FindComponent(SCR_DamageEffectComponent));
-if (!effectComp) return;
+// Custom damage effect — override the REAL lifecycle callbacks
+class ARGA_MyCustomDamageEffect : SCR_DamageEffect
+{
+    override void OnEffectAdded(SCR_ExtendedDamageManagerComponent dmgManager)
+    {
+        // Custom effect startup — e.g. register visual/audio state
+    }
 
-// The component self-registers with the damage manager; no manual subscription needed.
-// To add a runtime effect:
-SCR_ParticleDamageEffect fx = new SCR_ParticleDamageEffect();
-fx.m_ParticleEffect = particleResourceName;
-fx.m_eActivationState = EDamageState.DESTROYED;
-effectComp.AddEffect(fx);
+    override void OnEffectRemoved(SCR_ExtendedDamageManagerComponent dmgManager)
+    {
+        // Cleanup
+    }
 
-// Checking current damage state (from damage manager, not effect component)
+    protected override void HandleConsequences(SCR_ExtendedDamageManagerComponent dmgManager, DamageEffectEvaluator evaluator)
+    {
+        // Prefer implementing on the evaluator when the logic is reusable across effects
+        evaluator.HandleEffectConsequences(this, dmgManager);
+    }
+}
+
+// Checking current damage state (from the damage manager, not a separate effects component)
 SCR_DamageManagerComponent dmgMgr =
     SCR_DamageManagerComponent.Cast(entity.FindComponent(SCR_DamageManagerComponent));
 if (!dmgMgr) return;
-EDamageState state = dmgMgr.GetState();
-
-// Override example in a custom SCR_DamageEffect subclass
-class ARGA_MyCustomDamageEffect : SCR_DamageEffect
-{
-    override void OnActivate(IEntity owner, EDamageState state)
-    {
-        super.OnActivate(owner, state);
-        // Custom effect startup
-    }
-
-    override void OnDeactivate(IEntity owner)
-    {
-        super.OnDeactivate(owner);
-        // Cleanup custom effect
-    }
-}
+// See reforger-wiki-damage-system for OnDamageStateChanged and related APIs.
 ```
 
 ## References
 
-- PDF: `Damage Effects – Arma Reforger - Bohemia Interactive Community.pdf`
+- PDF: `Damage Effects – Arma Reforger - Bohemia Interactive Community.pdf` (superseded for class names/API by the source-verified corrections above)
+- Doxygen coverage gap: `Game`/`GameCode` (where `DamageEffect` subclasses live) is not covered by the local Doxygen dump. Verified instead against `scripts/Game/generated/DamageEffects/BaseDamageEffect.c` and `scripts/Game/Damage/DamageEffects/BaseDamageEffects/SCR_DamageEffect.c` (Reforger_1.6.0.119 raw source), cross-checked with `arexplorer.zeroy.com` (see reference memory `reforger/arexplorer-online-doxygen`).
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Damage_Effects`
-- Related spoke: `reforger-wiki-damage-system` (damage logic, class hierarchy, SetHealth caveats)
+- Related spoke: `reforger-wiki-damage-system` (damage logic, `SCR_ExtendedDamageManagerComponent`, `OnDamage`/`OnDamageStateChanged`, `SetHealth` caveats)

@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "class template"
     - "generic class"
@@ -102,4 +102,5 @@ class TAG_TripleStore<Class T, Class U, Class V>
 ## References
 
 - PDF: `Class Template Example – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen: `class MyClass<Class T>` syntax confirmed real and matches this skill exactly — verified via the real engine class `ScriptInvokerBase<Class T> : Managed` (`tools_8c_source.html`, see `reforger-wiki-script-invoker`). No bugs found.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Class_Template_Example`

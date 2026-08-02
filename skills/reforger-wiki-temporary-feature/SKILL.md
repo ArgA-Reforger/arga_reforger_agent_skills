@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.2.0"
   triggers:
     - "temporary feature"
     - "feature flag"
@@ -19,6 +19,9 @@ metadata:
 Load this skill when implementing, reviewing, or gating incomplete or experimental Enforce Script features using the temporary feature pattern. Applies to `SCR_TemporaryFeature` usage and any similar flag-based conditional activation pattern. Do not use for permanent configuration (`[Attribute]` properties) — those belong in `reforger-wiki-config-object`.
 
 ## Hard Rules
+
+**CONFIRMED NOT TO EXIST — `SCR_TemporaryFeature`/`ETemporaryFeature` are not real**
+A filename/content search across the entire `Game`/`GameCode` source tree (Reforger_1.6.0.119 snapshot) found zero matches for `SCR_TemporaryFeature` or `ETemporaryFeature`. A follow-up search on `arexplorer.zeroy.com` (which indexes `Game`/`GameCode` at the current 1.7.0.54 version and successfully found other classes this session) also found nothing under those names — independently confirmed by the user as well. Everything below describing the `SCR_TemporaryFeature`/`ETemporaryFeature` API is **fabricated and should not be used**. The general "feature flag gating experimental code" idea may still be a valid pattern in this codebase, but under a different (currently unknown) real class/enum name — do not reference `SCR_TemporaryFeature` in generated code; find and substitute the actual mechanism first.
 
 **Purpose**
 - The temporary feature pattern is for shipping work-in-progress code to QA or internal builds WITHOUT enabling it by default in release.
@@ -90,5 +93,6 @@ modded class SCR_BaseGameMode
 ## References
 
 - PDF: `Scripting Temporary Feature – Arma Reforger - Bohemia Interactive Community.pdf`
+- Confirmed absent: full-tree search of Reforger_1.6.0.119 `Game`/`GameCode` source, and `arexplorer.zeroy.com` (see reference memory `reforger/arexplorer-online-doxygen`) — `SCR_TemporaryFeature`/`ETemporaryFeature` not located in either; user independently confirmed the same conclusion.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting_Temporary_Feature`
 - Related spokes: `reforger-wiki-scripting-modding` (modded keyword), `reforger-wiki-preprocessor-directives` (#ifdef DEVELOPER)

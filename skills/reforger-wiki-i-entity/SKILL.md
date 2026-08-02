@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "IEntity interface"
     - "QueryEntitiesBySphere"
@@ -29,8 +29,8 @@ Load this skill when code calls methods directly on `IEntity` references — tra
 - `GetParent()` — returns the direct parent `IEntity`, or null if root.
 - `GetRootParent()` — returns the top-most ancestor in the hierarchy.
 - `GetChildren()` — returns the FIRST child. Iterate siblings with `GetSibling()`.
-- `AddChild(child, pivot, flags)` — adds a child entity; pivot is pivot index or -1 for center.
-- `RemoveChild(child, keepTransform)` — detaches a child.
+- `AddChild(child, pivot, flags)` — adds a child entity; pivot is pivot index or -1 for center. Verified real signature: `int AddChild(notnull IEntity child, TNodeId pivot, EAddChildFlags flags = EAddChildFlags.AUTO_TRANSFORM)` — returns `int`, and `flags` defaults to `AUTO_TRANSFORM` if omitted.
+- `RemoveChild(child, keepTransform)` — detaches a child. Verified real signature: `RemoveChild(notnull IEntity child, bool keepTransform = false)`.
 
 **Transform Methods**
 - `GetOrigin()` / `SetOrigin(vector orig)` — world-space position.
@@ -96,5 +96,5 @@ BaseWorld world = entity.GetWorld();
 
 ## References
 
-- Doxygen: `class_i_entity.html` (Reforger 1.7.0.41)
+- Doxygen: `class_i_entity.html` — re-verified against the 1.7.0.54 build. All claims in this skill (`GetParent`/`GetRootParent`/`GetChildren`/`GetSibling`, `AddChild`/`RemoveChild`, `SetEventMask`/`ClearEventMask`/`GetEventMask`, `IsLoaded`/`IsDeleted`, `FindComponent`/`FindComponents`, `GetFlags`, `GetID`, `GetYawPitchRoll`, `SendEvent`) matched the real signatures — no bugs found in this skill.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Entity_Lifecycle`

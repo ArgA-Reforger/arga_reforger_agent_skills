@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "RplComponent"
     - "RplProp"
@@ -33,6 +33,16 @@ Load this skill when working directly with `RplComponent` or `BaseRplComponent` 
 - `IsOwner()` — returns `true` if this machine is the owner (elevated proxy or authority that is also owner).
 - `IsOwnerProxy()` — returns `true` if this is an owner proxy specifically (not the authority).
 - `IsRemoteProxy()` — returns `true` if this is a proxy that is NOT the owner.
+- `Role()` — returns the `RplRole` enum value directly (`RplRole.Authority` or `RplRole.Proxy`). This is the form Bohemia's own reference examples use (e.g. `if (rplComponent.Role() == RplRole.Authority)`); prefer the boolean helpers above for everyday guards, but expect `Role()` in official sample code.
+
+**Node structure — Head item and item gathering**
+- The first item ever inserted into a node is the **Head** item. It is the only item required to implement the replication lifetime callbacks (recreate node contents, destroy it, move it within the node hierarchy, save/load initialization data). For entities, `RplComponent` itself is that Head item.
+- During `EOnInit`, `RplComponent` walks the entity it is attached to and gathers every item with a non-empty replication layout (at least one `RplProp`, RPC, or replication callback) into its `RplNode`. Non-replicated entities/components (no RPCs, no replicated state) are skipped and become invisible to replication — they get no `RplId` and cannot be referenced through it.
+- If the component's `Recursive` property is OFF, only the entity `RplComponent` is attached to (and its own components) are gathered — child entities are ignored entirely by replication.
+- If `Recursive` is ON, child entities are walked too, EXCEPT it stops recursing into any child that has its own `RplComponent` — that child becomes the Head of a separate node instead.
+- The **node hierarchy is a flat list per node**, not a mirror of the entity hierarchy — a node with recursive gathering can contain items from several entities, all as siblings in one array.
+- **`"Parent Node From Parent Entity"`** (a `RplComponent` property, ON by default) makes this node's parent-in-replication automatically follow its owning entity's parent-in-the-world. Turning it OFF decouples them: the replication scheduler can then stream this sub-hierarchy independently from its visual parent — useful to avoid replicating, say, every item inside a large building whenever the building itself streams in.
+- Common prefab pitfalls from this: if the prefab root entity has no `RplComponent`, replication knows nothing about it or its non-replicated children, which breaks spawning it at runtime/JIP (no `RplId` to associate with the prefab's resource GUID). If an entity between two `RplComponent`-owning entities is not itself part of a node, the client can reconstruct a different parent-child relationship than the server has — silent desync, not a crash.
 
 **Identity and IDs**
 - `Id()` — returns the `RplId` for this component's entity. Cache the result; `Replication.FindItemId()` uses a table lookup.
@@ -89,4 +99,5 @@ RplId myId = rpl.Id();
 ## References
 
 - Doxygen: `class_rpl_component_class.html`, `_base_rpl_component_8c_source.html`, `_rpl_identity_8c_source.html`
-- Related: `reforger-wiki-multiplayer` (RPC patterns, Replication statics)
+- Doxygen (source of truth for node/gathering behaviour in this skill): `_page__replication__rpl_node.html`, `_page__replication__entities_and_components.html`
+- Related: `reforger-wiki-multiplayer` (RPC patterns, Replication statics, node types Loadtime/Runtime/Local, `RplStateOverride`)

@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "Cast"
     - "upcasting"
@@ -88,5 +88,6 @@ modded class SCR_ExampleClass
 
 ## References
 
+- Doxygen: `Cast()`/null-on-failure semantics and `<Class T>` template syntax confirmed consistent with dozens of real class declarations examined across this session (e.g. `ScriptInvokerBase<Class T>`, `BaseContainer.Cast`). No bugs found.
 - PDF: `Object Oriented Programming Advanced Usage – Arma Reforger - Bohemia Interactive Community.pdf`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Object_Oriented_Programming_Advanced_Usage`

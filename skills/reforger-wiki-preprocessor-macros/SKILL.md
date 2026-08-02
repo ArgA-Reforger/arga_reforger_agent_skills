@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "__FILE__"
     - "__LINE__"
@@ -71,5 +71,6 @@ int nextLine = __LINE__ + 1;
 
 ## References
 
+- Doxygen: `Workbench.GetAbsolutePath` usage confirmed present across many real plugin source files (e.g. `_addon_build_info_tool_8c_source.html`, `_asset_library_utils_8c_source.html`). No bugs found.
 - PDF: `Scripting_ Preprocessor Macros – Arma Reforger - Bohemia Interactive Community.pdf`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting:_Preprocessor_Macros`

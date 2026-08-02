@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "SQF"
     - "forEach"
@@ -55,7 +55,7 @@ Load this skill when the context involves migrating SQF code to Enforce Script, 
 5. `_x` → the named element variable in the `foreach` signature.
 6. `hint` and `systemChat` have no direct equivalent — use `Print()` / `PrintFormat()` for logging, or UI API for HUD.
 7. `isServer` → `Replication.IsServer()` (runtime check — no compile-time guards).
-8. There is no `player` global in Enforce Script. Use: `IEntity player = GetGame().GetPlayerController().GetControlledEntity();`
+8. There is no `player` global in Enforce Script. Use: `IEntity player = GetGame().GetPlayerController().GetControlledEntity();` — UNCONFIRMED: `GetControlledEntity()` was not found anywhere in the local Doxygen dump, and a direct `PlayerController` class-page guess on arexplorer.zeroy.com 404'd. The general shape (get the player controller, ask it for its controlled entity) is very likely the right idea, but verify the exact method/class name before relying on it.
 9. `while { condition } do {}` → `while (condition) {}`.
 10. `switch (x) do { case 0: {}; }` → `switch (x) { case 0: ...; break; }` — `break` is required in Enforce.
 11. SQF is NOT case-sensitive — Enforce IS. All identifiers and keywords must match exact case.
@@ -141,4 +141,5 @@ if (Replication.IsServer())
 ## References
 
 - PDF: `From SQF to Enforce Script – Arma Reforger - Bohemia Interactive Community.pdf`
+- Checked, inconclusive: `PlayerController.GetControlledEntity()` — not found in local Doxygen dump; direct class-page guess on `arexplorer.zeroy.com` 404'd (see reference memory `reforger/arexplorer-online-doxygen`). `float.AlmostEqual`, `Replication.IsServer()`, and the general syntax comparisons in this skill were not contradicted by anything found this session.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:From_SQF_to_Enforce_Script`

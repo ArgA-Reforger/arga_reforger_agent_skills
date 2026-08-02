@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "InputManager"
     - "AddActionListener"
@@ -60,7 +60,7 @@ Load this skill when code reads player input through the `InputManager` (action 
 **Listeners**
 - `AddActionListener(actionName, EActionTrigger, callback)` — subscribe a method to an action trigger event.
 - `RemoveActionListener(actionName, EActionTrigger, callback)` — unsubscribe. Always remove on cleanup.
-- `EActionTrigger` values: `PRESSED`, `RELEASED`, `VALUE`, `DOWN`, `UP` (check engine docs for current set).
+- `EActionTrigger` values (verified against `_e_action_trigger_8c_source.html`): `DOWN`, `PRESSED`, `UP`, `VALUE`. CORRECTED: there is no `RELEASED` value — the previous version of this skill listed one that doesn't exist.
 
 **Polling (vs. listeners)**
 - `GetActionValue(actionName)` — normalised float value.
@@ -102,5 +102,6 @@ bool isMoving = im.IsContextActive("CharacterMovementContext");
 ## References
 
 - PDF: `Input Manager – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (source of truth for `EActionTrigger` and inherited `ActionManager` API in this skill): `_e_action_trigger_8c_source.html`, `class_input_manager.html`, `class_action_manager.html` (see `reforger-wiki-action-manager` for the fully-verified method list).
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Input_Manager`
 - Config: `chimeraInputCommon.conf` (ArmaReforger:Configs/System/)

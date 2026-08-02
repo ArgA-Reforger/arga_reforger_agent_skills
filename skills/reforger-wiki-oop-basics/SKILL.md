@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "class"
     - "extends"
@@ -110,6 +110,7 @@ modded class ARGA_MyComponent
 
 ## References
 
+- Doxygen: `class X : Y` / `sealed class` / getter-setter patterns confirmed consistent with dozens of real class declarations examined across this session (e.g. `sealed class BaseContainer : BaseResourceObject`, `sealed class ActionManager`). No bugs found.
 - PDF: `Object Oriented Programming Basics – Arma Reforger - Bohemia Interactive Community.pdf`
 - Doxygen: `https://community.bistudio.com/wikidata/external-data/arma-reforger/EnfusionScriptAPIPublic/`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Object_Oriented_Programming_Basics`

@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "GenericEntity"
     - "IEntity"
@@ -43,7 +43,7 @@ Load this skill when creating or editing a World Editor entity class — i.e., a
 
 **Event Mask**
 - You MUST call `SetEventMask(EntityEvent.FRAME)` in the constructor before `EOnFrame` will fire. No mask = no event.
-- Available events: `EntityEvent.FRAME`, `EntityEvent.INIT`, `EntityEvent.DELETE`, `EntityEvent.FIXED_FRAME`, `EntityEvent.SIMULATE`, `EntityEvent.PHYSICS_MOVE`, `EntityEvent.CONTACT`, `EntityEvent.TOUCH`, etc.
+- Available events (verified against `_entity_event_8c.html`): `EntityEvent.FRAME`, `EntityEvent.INIT`, `EntityEvent.SIMULATE`, `EntityEvent.FIXEDFRAME`, `EntityEvent.PHYSICSMOVE`, `EntityEvent.CONTACT`, `EntityEvent.TOUCH`, `EntityEvent.VISIBLE`, `EntityEvent.POSTFRAME`, `EntityEvent.ANIMEVENT`, `EntityEvent.POSTSIMULATE`, `EntityEvent.JOINTBREAK`, `EntityEvent.PHYSICSACTIVE`, `EntityEvent.POSTFIXEDFRAME`, `EntityEvent.USER3`/`USER4`/`USER5`, `EntityEvent.DISABLED`, `EntityEvent.ALL`. CORRECTED: there is NO `EntityEvent.DELETE` (cleanup is via the destructor, no mask needed), and the flag names have no underscore — it's `FIXEDFRAME`/`PHYSICSMOVE`, not `FIXED_FRAME`/`PHYSICS_MOVE` (see `reforger-wiki-entity-lifecycle` for the same correction with more detail).
 
 **Compile & Reload**
 - After creating or modifying entity files, reload via **Shift + F7** (Compile & Reload Scripts) in Workbench to see the entity in the Create tab.
@@ -93,4 +93,5 @@ ARGA_MyComponent comp = ARGA_MyComponent.Cast(entity.FindComponent(ARGA_MyCompon
 ## References
 
 - PDF: `Create an Entity – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (source of truth for `EntityEvent` in this skill): `_entity_event_8c.html`, `group___entities.html`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Create_an_Entity`

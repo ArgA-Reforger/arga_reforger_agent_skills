@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "scripting example"
     - "end-to-end example"
@@ -86,6 +86,16 @@ override void EOnDelete(IEntity owner)
 ## Key APIs / Patterns
 
 ```enforce
+// Typed invoker for this component — declared once, outside the class.
+// CORRECTED: `ScriptInvoker` is a fixed typedef (`ScriptInvokerBase<func>`), NOT a generic —
+// `ScriptInvoker<SCR_TW_ItemComponent>` does not exist and would not compile. Neither engine core
+// (scripts/GameLib/tools.c) nor the project helper (scripts/Game/Helpers/SCR_ScriptInvokerHelper.c)
+// has a ready-made invoker for a component-typed argument, so define one the same way that file does.
+// See reforger-wiki-script-invoker.
+void ScriptInvokerItemComponentMethod(SCR_TW_ItemComponent item);
+typedef func ScriptInvokerItemComponentMethod;
+typedef ScriptInvokerBase<ScriptInvokerItemComponentMethod> ScriptInvokerItemComponent;
+
 // --- SCR_TW_ItemComponent.c ---
 class SCR_TW_ItemComponent : ScriptComponent
 {
@@ -96,11 +106,11 @@ class SCR_TW_ItemComponent : ScriptComponent
     protected int m_iPoints;
 
     // Lazy-init ScriptInvoker getter pattern
-    protected ref ScriptInvoker<SCR_TW_ItemComponent> m_OnCollected;
-    ScriptInvoker<SCR_TW_ItemComponent> GetOnCollected()
+    protected ref ScriptInvokerItemComponent m_OnCollected;
+    ScriptInvokerItemComponent GetOnCollected()
     {
         if (!m_OnCollected)
-            m_OnCollected = new ScriptInvoker<SCR_TW_ItemComponent>();
+            m_OnCollected = new ScriptInvokerItemComponent();
         return m_OnCollected;
     }
 
@@ -121,11 +131,13 @@ class SCR_TW_GameModeComponent : SCR_BaseGameModeComponent
     [RplProp(onRplName: "OnScoreUpdated")]
     protected int m_iTotalScore;
 
-    protected ref ScriptInvoker<int> m_OnScoreUpdated;
-    ScriptInvoker<int> GetOnScoreUpdated()
+    // ScriptInvokerInt is a real pre-defined typedef from SCR_ScriptInvokerHelper.c —
+    // no need to invent one for a plain int argument (unlike the component case above).
+    protected ref ScriptInvokerInt m_OnScoreUpdated;
+    ScriptInvokerInt GetOnScoreUpdated()
     {
         if (!m_OnScoreUpdated)
-            m_OnScoreUpdated = new ScriptInvoker<int>();
+            m_OnScoreUpdated = new ScriptInvokerInt();
         return m_OnScoreUpdated;
     }
 
@@ -146,5 +158,6 @@ class SCR_TW_GameModeComponent : SCR_BaseGameModeComponent
 ## References
 
 - PDF: `Scripting Example – Arma Reforger - Bohemia Interactive Community.pdf`
+- Corrected: `ScriptInvoker<T>` generic syntax does not exist (`ScriptInvoker` is a fixed typedef, not a template) — see `reforger-wiki-script-invoker` for the real typedef family and how to add project-specific ones.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting_Example`
 - Related spokes: `reforger-wiki-component`, `reforger-wiki-event-handlers`, `reforger-wiki-multiplayer`, `reforger-wiki-script-invoker`
