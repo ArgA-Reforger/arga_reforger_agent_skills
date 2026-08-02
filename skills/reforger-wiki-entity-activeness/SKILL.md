@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "EOnActivate"
     - "EOnDeactivate"
@@ -41,6 +41,10 @@ Load this skill when code involves activating/deactivating components or entitie
 
 **Conditional Activation**
 - If a component has a custom condition (e.g., `m_bCustomCondition`), check it inside `EOnActivate`/`EOnDeactivate` before setting/clearing the mask. This avoids incorrectly enabling/disabling the frame event when the component is not ready.
+
+**Verified against Doxygen**
+- `EntityEvent.FRAME` (`_entity_event_8c.html`) and `EntityFlags.ACTIVE` (`_entity_flags_8c.html`) are two DIFFERENT, real, and independent flags in the engine — not two names for the same thing. That distinction is exactly what this skill is about: don't set `EntityFlags.ACTIVE` just to get `FRAME` events, they are unrelated bit flags on unrelated enums.
+- `GenericComponent.Activate(IEntity owner)` (`class_generic_component.html`) is confirmed to internally call `EOnActivate()` — consistent with this skill's activation pattern. Doxygen does not carry version-history prose (like the 0.9.8 behavior change), so that specific historical claim could not be independently verified from this source, but no contradiction was found either.
 
 ## Key APIs / Patterns
 
@@ -96,4 +100,5 @@ class ARGA_MyComponent : ScriptComponent
 ## References
 
 - PDF: `Entity Activeness – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (source of truth for the flags in this skill): `_entity_flags_8c.html`, `_entity_event_8c.html`, `class_generic_component.html`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Entity_Activeness`

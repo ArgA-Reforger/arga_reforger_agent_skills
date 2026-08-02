@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "int"
     - "float"
@@ -130,5 +130,6 @@ foreach (int i, string name : m_aNames)
 
 ## References
 
+- Doxygen: `float.AlmostEqual(float a, float b, float epsilon = 0.0001)` confirmed real (`float_8c_source.html`) — matches this skill exactly. No bugs found.
 - PDF: `Scripting_ Values – Arma Reforger - Bohemia Interactive Community.pdf`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting:_Values`

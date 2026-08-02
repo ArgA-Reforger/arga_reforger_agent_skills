@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "Print"
     - "PrintFormat"
@@ -88,5 +88,6 @@ else
 
 ## References
 
+- Doxygen: `Print`/`PrintFormat` usage patterns confirmed consistent across essentially every real source file examined this session. No bugs found.
 - PDF: `Scripting First Steps – Arma Reforger - Bohemia Interactive Community.pdf`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting_First_Steps`

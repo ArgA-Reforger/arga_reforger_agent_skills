@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "ScriptInvoker"
     - "ScriptInvokerVoid"
@@ -31,9 +31,10 @@ Load this skill when the context involves event systems, callbacks, or observer 
 - Subscribers NEVER access the invoker field directly — always through the owner's getter.
 
 **Invoker Types**
-- `ScriptInvokerVoid` — for events with no arguments; subscribed methods must have signature `void MyMethod()`.
-- `ScriptInvokerBase<func>` — for events with arguments. Declare the function signature via `typedef` first.
-- Custom typed invokers using `typedef` are the preferred pattern for non-void events.
+- The ONLY invoker type defined in the engine core (`scripts/GameLib/tools.c`) is `ScriptInvokerBase<Class T> : Managed`, plus the bare typedef `ScriptInvoker = ScriptInvokerBase<func>` (no argument typing at all).
+- `ScriptInvokerVoid` and every other typed variant (`ScriptInvokerInt`, `ScriptInvokerBool`, `ScriptInvokerFloat`, `ScriptInvokerString` — each with 1-5 argument versions, `ScriptInvokerEntity`/`Entity2`, `ScriptInvokerVector`, `ScriptInvokerWidget`, `ScriptInvokerBaseWorld`, `ScriptInvokerRplId`, `ScriptInvokerEntityAndStorage`, `ScriptInvokerFaction`) are project-level typedefs defined in `scripts/Game/Helpers/SCR_ScriptInvokerHelper.c`, NOT in the engine core. That file's own header comment says its purpose: "Generic Script invokers. To be used in any script that does not need specific invokers. If a series of types comes up often, it is good to add it here."
+- Before writing a custom `typedef` for a new argument signature, check `SCR_ScriptInvokerHelper.c` first — a matching generic invoker very likely already exists there (e.g. `ScriptInvokerInt`, `ScriptInvokerBool2`, `ScriptInvokerFloat3`, `ScriptInvokerEntity2`). Only define your own typedef when the signature is not one of the generic ones already provided.
+- Custom typed invokers using `typedef` remain the preferred pattern for non-void events not already covered by the helper file.
 
 **Subscribe / Unsubscribe**
 - Subscribe: `owner.GetOnEvent().Insert(OnEvent);` — registers a method reference.
@@ -129,5 +130,6 @@ class TAG_EventHolder
 ## References
 
 - PDF: `ScriptInvoker Usage – Arma Reforger - Bohemia Interactive Community.pdf`
-- Doxygen: `scripts/GameLib/tools.c` (ScriptInvokerBase at line 117, ScriptInvokerVoid at line 131)
+- Doxygen (engine core — source of truth, confirmed no `ScriptInvokerVoid` here): `tools_8c_source.html` / `scripts/GameLib/tools.c` — `ScriptInvokerBase<Class T>` at line 117, `typedef ScriptInvokerBase<func> ScriptInvoker` at line 134. Corrected: the previous "ScriptInvokerVoid at line 131" reference was wrong — that line is `Dump()`, and `ScriptInvokerVoid` is not declared in this file at all.
+- Source (not in Doxygen — Game-layer, project convention, not engine core): `scripts/Game/Helpers/SCR_ScriptInvokerHelper.c` — defines `ScriptInvokerVoid` and every other typed generic invoker.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:ScriptInvoker_Usage`

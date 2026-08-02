@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "JsonApiStruct"
     - "SCR_JsonApiStruct"
@@ -34,23 +34,20 @@ Load this skill when using `JsonApiStruct` (or classes inheriting from it) to en
 **Encoding (Pack)**
 - Call `Pack()` to serialise the object to an internal buffer.
 - Call `AsString()` to retrieve the packed JSON as a string.
-- Call `PackToFile("path.json")` to pack and write to file in one call.
-- Override `OnPack()` to add variables not auto-registered (use `StoreFloat`, `StoreInt`, `StoreObject`, `StartArray`/`ItemString`/`EndArray`, etc.).
+- Call `PackToFile("path.json")` to pack and write to file in one call. `SaveToFile("path.json")` is the analogous call on the load side of the pair (see Doxygen note below).
+- Override `OnPack()` to add variables not auto-registered.
+- CORRECTED against Doxygen (`_json_api_struct_8c_source.html`): the store method for integers is `StoreInteger(string name, int value)`, NOT `StoreInt` — that name doesn't exist and would fail to compile. Full real store/item API: `StoreObject`, `StoreFloat`, `StoreInteger`, `StoreBoolean`, `StoreString`, `StoreVector` (single values); `StartArray`/`EndArray` to bracket a list, with `ItemObject`, `ItemFloat`, `ItemInteger`, `ItemBoolean`, `ItemString`, `ItemVector`, `ItemArray` (nested array) as the per-element calls inside it. There is also `StartObject(string name)`/`EndObject()` to write a nested object manually without a full `JsonApiStruct` subtype, and `RegAll()` to register every member automatically instead of calling `RegV()` per field, plus `UnregV(string name)` to undo a single registration.
+- There is NO `OnBufferReady()` override — that method does not exist anywhere in the real class and was fabricated in an earlier version of this skill. Do not reference it.
 
 **Decoding (Expand)**
 - Call `ExpandFromRAW(string data)` to decode JSON text onto the object.
 - Call `LoadFromFile("path.json")` to load and expand from a file — `Expand` is called automatically.
 - Override `OnExpand()` to handle custom pre-processing before expand starts.
-- Override `OnBufferReady()` to access the packed string after a successful `Pack`.
+- Additional real callbacks not previously documented here: `OnObject(string name)`, `OnStartArray(string name)`, `OnEndArray(int itemCount)`, `OnItemObject(int index, string name)` — override these to react as a nested object/array is being expanded.
 
 **Error handling**
 - Override `OnSuccess(int errorCode)` — called when a pending store operation (typically from REST) completes with `ETJSON_OK`.
-- Override `OnError(int errorCode)` — called on failure. Check `EJsonApiError` enum for specific codes:
-  - `ETJSON_PARSERERROR` — malformed JSON input
-  - `ETJSON_FAILFILELOAD` — file could not be loaded
-  - `ETJSON_FAILFILESAVE` — file could not be saved
-  - `ETJSON_TIMEOUT` — REST transmission timeout
-  - `ETJSON_NOBUFFERS` — too many objects processing at once
+- Override `OnError(int errorCode)` — called on failure. Check `EJsonApiError` enum for specific codes (full real list, verified against `_e_json_api_error_8c_source.html`): `ETJSON_OK`, `ETJSON_UNKNOWN`, `ETJSON_PARSERERROR` (malformed JSON input), `ETJSON_FAILFILELOAD` (file could not be loaded), `ETJSON_FAILFILESAVE` (file could not be saved), `ETJSON_TIMEOUT` (REST transmission timeout), `ETJSON_NOBUFFERS` (too many objects processing at once), `ETJSON_COMMSEND` (network send failure), `ETJSON_NOTARRAY` (expected a JSON array, got something else).
 - Error codes are processed asynchronously for REST requests to avoid blocking the main thread.
 
 **Object lifetime**
@@ -148,5 +145,6 @@ string data2 = original.AsString();
 ## References
 
 - PDF: `JsonApiStruct Usage – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (source of truth for the corrections in this skill): `_json_api_struct_8c_source.html`, `_e_json_api_error_8c_source.html`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:JsonApiStruct_Usage`
 - See also: `reforger-wiki-json` (raw JSON format rules), `reforger-wiki-rest-api` (REST callback usage), `reforger-wiki-serialisation` (SCR_JsonSaveContext)

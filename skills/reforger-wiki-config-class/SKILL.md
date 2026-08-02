@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "config asset"
     - "config file creation"
@@ -62,4 +62,5 @@ class TAG_SuperConfig
 ## References
 
 - PDF: `Create a Config Class – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (verified accurate, no bugs found): `configRoot` confirmed as a real `BaseContainerProps` constructor parameter, defaulting to `false` (`_base_container_props_8c_source.html`). Full signature and the `NamingConvention` parameter are detailed in `reforger-wiki-config-object`.
 - See also: `reforger-wiki-config-object` (full `[BaseContainerProps]`/`[Attribute]` parameter reference), `reforger-wiki-scripting-conf` (loading .conf in script), `reforger-wiki-base-container` (BaseContainer model)

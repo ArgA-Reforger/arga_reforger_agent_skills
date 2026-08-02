@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.2.0"
   triggers:
     - "CallLater"
     - "GetTickCount"
@@ -27,14 +27,15 @@ Load this skill when writing, reviewing, or optimising Enforce Script code for r
 - If a per-frame operation is NOT needed every frame, use a time accumulator or `CallLater` to throttle it.
 
 **`CallLater` — deferred and repeated calls**
-- `GetGame().GetCallqueue().CallLater(callback, delayMs, repeat, params...)` schedules work outside the frame loop.
+- `ScriptCallQueue` is a confirmed real class (`scripts/GameLib/tools.c`) with `CallLater(func fn, int delay = 0, bool repeat = false, void param1=NULL, ...)`, `Call(...)`, `Remove(func fn)`, `GetRemainingTime(func fn)`, `Clear()`, `Dump()` — matches this skill's usage in spirit.
+- `GetGame().GetCallqueue()` IS confirmed real: `protected ScriptCallQueue GetCallqueue()`, declared in `scripts/Game/game.c` (the Arma Reforger-specific `Game` extension — this is why it wasn't found in the local Doxygen dump, which doesn't cover `scripts/Game/`; confirmed instead via arexplorer.zeroy.com's source view of that file). This skill's original accessor call was correct.
 - Use it for: polling loops, timers, deferred initialisation, periodic state checks.
-- `repeat = true` creates a recurring call — MUST be explicitly cancelled via `GetGame().GetCallqueue().Remove(callback)` in `EOnDelete`.
-- `delayMs = 0` defers to the next frame (useful for escaping init-order issues) — but this is NOT free; avoid in tight loops.
+- `repeat = true` creates a recurring call — MUST be explicitly cancelled via the queue's `Remove(callback)` in `EOnDelete`.
+- `delay = 0` defers to the next frame (useful for escaping init-order issues) — but this is NOT free; avoid in tight loops.
 - Avoid scheduling `CallLater` from inside another `CallLater` callback in a tight loop — stack overflow risk.
 
 **`GetTickCount` — timing**
-- `System.GetTickCount()` returns milliseconds since engine start (int).
+- `System.GetTickCount(int prev = 0)` returns milliseconds since engine start (int) — confirmed real (`generated_2_system_2_system_8c_source.html`).
 - Use it to measure elapsed time for throttling: `if (System.GetTickCount() - m_iLastUpdate < UPDATE_INTERVAL_MS) return;`
 - Do NOT use it for game-time (paused game ≠ real time); use `GetGame().GetTickTime()` for game time delta.
 
@@ -135,5 +136,7 @@ GetGame().GetCallqueue().CallLater(DeferredSetup, 0, false);  // next frame, onc
 ## References
 
 - PDF: `Scripting_ Performance – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen: `System.GetTickCount(int prev=0)` confirmed real (`generated_2_system_2_system_8c_source.html`); `ScriptCallQueue` class confirmed real (`tools_8c_source.html`).
+- arexplorer.zeroy.com (covers `scripts/Game/`, unlike the local dump): `Game.GetCallqueue()` confirmed real — `protected ScriptCallQueue GetCallqueue()` in `scripts/Game/game.c` (`_game_2game_8c.html`). The earlier version of this skill's caveat about this being unconfirmed was wrong — the local dump simply doesn't index this file.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting_Performance`
 - Related spokes: `reforger-wiki-best-practices`, `reforger-wiki-dos-donts`, `reforger-wiki-entity-lifecycle`

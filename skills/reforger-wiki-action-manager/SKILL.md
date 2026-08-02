@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "ActionManager"
     - "AddAction"
@@ -41,6 +41,7 @@ Load this skill when code uses `ActionManager` directly to activate contexts/act
 - `IsActionActive(actionName)` — true if action is currently in active state.
 - `ActivateAction(actionName, duration)` — programmatically activate an action (simulate input).
 - `SetActionValue(actionName, float)` — force-set action value (useful for testing or AI).
+- `GetActionInputType(actionName)` — returns the `EActionValueType` of the action (missing from earlier version of this skill; confirmed real in `_action_manager_8c_source.html`).
 
 **Action Listeners**
 - `AddActionListener(actionName, EActionTrigger, ActionListenerCallback callback)` — register a callback for when the action crosses a trigger threshold.
@@ -101,6 +102,6 @@ for (int i = 0; i < count; i++)
 
 ## References
 
-- Doxygen: `class_action_manager.html` (Reforger 1.7.0.41)
+- Doxygen: `class_action_manager.html`, `_action_manager_8c_source.html` — re-verified against 1.7.0.54. Every method in this skill (`SetDebug`, `ActivateContext`, `IsContextActive`, `SetContextDebug`, `ActivateAction`, `IsActionActive`, `GetActionValue`, `GetActionTriggered`, `SetActionValue`, `GetActionCount`, `GetActionName`, `AddActionListener`, `RemoveActionListener`) matched the real `sealed class ActionManager` exactly, including default values (`duration = 0`). Only `GetActionInputType` was missing and has been added.
 - Source: `scripts/GameLib/generated/Input/ActionManager.c`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Input_Manager`

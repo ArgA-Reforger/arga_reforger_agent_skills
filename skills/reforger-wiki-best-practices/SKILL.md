@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "best practices"
     - "code quality"
@@ -82,8 +82,12 @@ void ProcessEntity(IEntity entity)
     if (!dmgMgr)
         return;  // entity doesn't have damage manager — not an error, just not applicable
 
-    // Safe to use dmgMgr here
-    dmgMgr.HandleDamage(EDamageType.TRUE, 10.0, null, Instigator.CreateArtificialInstigator());
+    // Safe to use dmgMgr here — HandleDamage takes a single BaseDamageContext, not positional args
+    // (see reforger-wiki-damage-system for the verified signature)
+    BaseDamageContext ctx = new BaseDamageContext();
+    ctx.damageType = EDamageType.TRUE;
+    ctx.damageValue = 10.0;
+    dmgMgr.HandleDamage(ctx);
 }
 
 // Encapsulated setter with replication bump (authority guard)
@@ -125,5 +129,6 @@ class ARGA_MyComponent : ScriptComponent
 ## References
 
 - PDF: `Scripting_ Best Practices – Arma Reforger - Bohemia Interactive Community.pdf`
+- Corrected: `HandleDamage` does not take `(EDamageType, float, HitZone, Instigator)` — verified real signature is `HandleDamage(notnull BaseDamageContext damageContext)` (see `reforger-wiki-damage-system`, sourced from `scripts/Game/generated/Components/DamageManagerComponent.c`, since this class is not covered by Doxygen).
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting_Best_Practices`
 - Related spokes: `reforger-wiki-dos-donts`, `reforger-wiki-conventions`, `reforger-wiki-performance`

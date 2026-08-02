@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "&&"
     - "||"
@@ -117,5 +117,6 @@ foreach (int i, string item : m_aItems)
 
 ## References
 
+- Doxygen: `float.AlmostEqual(a, b, epsilon=0.0001)` confirmed real (`float_8c_source.html`). No bugs found.
 - PDF: `Scripting_ Operators – Arma Reforger - Bohemia Interactive Community.pdf`
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting:_Operators`

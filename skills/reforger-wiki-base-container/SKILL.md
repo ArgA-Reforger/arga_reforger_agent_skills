@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.3.0"
   triggers:
     - "BaseContainer"
     - "GetOwner"
@@ -68,11 +68,24 @@ worldEditorAPI.SetVariableValue(entitySource, null, "m_iValue", "42");
 array<ref ContainerIdPathEntry> path = { new ContainerIdPathEntry("m_SubObject") };
 worldEditorAPI.SetVariableValue(entitySource, path, "m_iValue", "42");
 
-// Typed config load via SCR_ConfigHelperT
-SCR_ConfigClass configInstance = SCR_ConfigHelperT<SCR_ConfigClass>.GetConfigObject(resourceName);
+// CORRECTED: "SCR_ConfigHelperT<T>.GetConfigObject()" appears to be FABRICATED — the real
+// class is SCR_ConfigHelper (no "T", NOT generic, scripts/Game/Helpers/SCR_ConfigHelper.c),
+// and it only has GetChildBaseContainerByPath(), GetChildFromList(), SplitConfigPath(), GetGUID()
+// — path/GUID string utilities, nothing that loads or returns a typed config object. To load a
+// typed .conf object, use the confirmed Resource.Load + BaseContainerTools.CreateInstanceFromPrefab
+// pattern shown in reforger-wiki-scripting-conf instead:
+Resource resource = Resource.Load(resourceName);
+if (resource.IsValid())
+{
+    SCR_ConfigClass configInstance = SCR_ConfigClass.Cast(
+        BaseContainerTools.CreateInstanceFromPrefab(resource.GetResource().ToBaseContainer())
+    );
+}
 ```
 
 ## References
 
 - PDF: `BaseContainer Usage – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen (verified accurate, no bugs found): `BaseContainer.Get(string varName, out void val)` / `.Set(string varName, void val)` confirmed (`_base_container_8c_source.html`); `BaseContainerList.Get(int)`/`Set(int, BaseContainer)`/`Insert`/`Remove`/`Count()` confirmed (`_base_container_list_8c_source.html`); `BaseContainerTools.CreateContainer(string typeClass)` returns `ref Resource`, `SaveContainer(BaseContainer cont, ResourceName resourceName, string fileName = "")` confirmed (`_base_container_tools_8c_source.html`).
+- Corrected via arexplorer.zeroy.com: `SCR_ConfigHelperT<T>.GetConfigObject()` does not match the real `SCR_ConfigHelper` class (`class_s_c_r___config_helper.html`, `scripts/Game/Helpers/SCR_ConfigHelper.c`) — that class is non-generic and only offers `GetChildBaseContainerByPath()`/`GetChildFromList()`/`SplitConfigPath()`/`GetGUID()`, unrelated to loading a typed config object.
 - See also: `reforger-wiki-resource-usage` (Resource lifetime), `reforger-wiki-config-object` (BaseContainerProps decorator), `reforger-wiki-config-class` (creating .conf root classes)

@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "do's and don'ts"
     - "forbidden pattern"
@@ -136,15 +136,25 @@ override void EOnFrame(IEntity owner, float timeSlice)
 ### DO: Use `EDamageType` correctly when calling HandleDamage
 
 ```enforce
-// CORRECT — use the semantically correct type
-dmgMgr.HandleDamage(EDamageType.FIRE, fireDamage, hitZone, instigator);
+// CORRECT — HandleDamage takes a single BaseDamageContext, not positional args
+// (verified against scripts/Game/generated/Components/DamageManagerComponent.c —
+// not covered by Doxygen, see reforger-wiki-damage-system)
+BaseDamageContext ctx = new BaseDamageContext();
+ctx.damageType = EDamageType.FIRE;   // use the semantically correct type
+ctx.damageValue = fireDamage;
+ctx.struckHitZone = hitZone;
+ctx.instigator = instigator;
+dmgMgr.HandleDamage(ctx);
 ```
 
 ### DON'T: Use `EDamageType.TRUE` as a general-purpose damage type
 
 ```enforce
 // WRONG — TRUE damage bypasses armour, suppression, bleeding, etc.
-dmgMgr.HandleDamage(EDamageType.TRUE, anyDamage, hitZone, instigator);
+BaseDamageContext ctx = new BaseDamageContext();
+ctx.damageType = EDamageType.TRUE;
+ctx.damageValue = anyDamage;
+dmgMgr.HandleDamage(ctx);
 // Only correct when you explicitly want to bypass all modifiers
 ```
 
@@ -220,5 +230,6 @@ See DO/DON'T pairs in Hard Rules above — all patterns are inline with each rul
 ## References
 
 - PDF: `Scripting_ Do's and Don'ts – Arma Reforger - Bohemia Interactive Community.pdf`
+- Corrected: `HandleDamage(EDamageType, float, HitZone, Instigator)` is not a real signature — see `reforger-wiki-damage-system` for the verified `BaseDamageContext`-based signature.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Scripting_Dos_and_Donts`
 - Related spokes: `reforger-wiki-best-practices`, `reforger-wiki-performance`, `reforger-wiki-multiplayer`

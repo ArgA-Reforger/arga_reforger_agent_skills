@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.0.0"
+  version: "1.1.0"
   triggers:
     - "GetOnPlayerSpawned"
     - "SCR_BaseGameMode"
@@ -26,21 +26,19 @@ Load this skill when code subscribes to or fires game events via `ScriptInvoker`
 - Using `ScriptInvoker` directly (not `ScriptInvokerBase`-derived typed variants) is BAD PRACTICE — use typed wrappers from `SCR_ScriptInvokerHelper.c`.
 - Subscribe with `GetOnXXX().Insert(HandlerMethod)` and unsubscribe with `GetOnXXX().Remove(HandlerMethod)` — always remove when the subscriber is deleted.
 
-**EventHandlerManagerComponent Events**
-- The `EventHandlerManagerComponent` groups high-level game events. Access it via:
-  `EventHandlerManagerComponent ehmc = EventHandlerManagerComponent.Cast(entity.FindComponent(EventHandlerManagerComponent));`
-- Subscribe through the component's ScriptInvoker getters (not `IEntity.SetEventMask`).
-- Key events exposed:
-  - `OnADSChanged` — character switches to/from ADS
-  - `OnInspectionModeChanged` — character enters/exits inspection mode
-  - `OnDestroyed` (DamageManagerComponent) — entity destroyed (default hit zone)
-  - `OnCompartmentEntering / Entered / Left / Leaving` — compartment (vehicle) events
-  - `OnLightStateChanged` — light state toggle
-  - `OnTurretReload` — reload started/finished (`isFinished` flag)
-  - `OnWeaponChanged / OnMuzzleChanged / OnAmmoCountChanged / OnMagazineChanged` — weapon system
-  - `OnProjectileShot / OnFiremodeChanged / OnWeaponAttachmentChanged / OnZeroingChanged` — weapon state
-  - `OnDayStart / OnNightStart` — time-of-day events (from `TimeAndWeatherManagerEntity`)
-  - `OnGrenadeThrown` — grenade throw event
+**EventHandlerManagerComponent — CORRECTED (verified against `scripts/Game/generated/Events/EventHandlerManagerComponent.c`, class definition)**
+- This section previously described `EventHandlerManagerComponent` as exposing per-event `GetOnXXX()` ScriptInvoker getters (`GetOnDestroyed()`, etc.). That does NOT match the actual generated class — it has no such getters at all. The real API is a generic, STRING-KEYED bridge between native (gamecode) events and script:
+  - `RaiseEvent(string eventName, int argsCount, void param1 = NULL, ...)` — raises a named event with up to 9 positional args (native → script direction; supported arg types: `int`/`float`/`bool`, `string`, `vector`, `Instance` pointers, and `array<float/int/string/vector>`).
+  - `RegisterScriptHandler(string eventName, Managed inst, func callback, bool delayed = true, bool singleUse = false)` — subscribes `callback` on `inst` to the named event. Execution is DELAYED by default (runs next frame, not immediately) — any instance passed as an argument must still be valid by then.
+  - `RemoveScriptHandler(string eventName, Managed inst, func callback, bool delayed = true)` — unsubscribes.
+  - `GetEventHandlers(out notnull array<BaseEventHandler> outEventHandlers)` — lists all registered handlers.
+- Correct subscription pattern is by event NAME, not by calling a getter method:
+  ```c
+  EventHandlerManagerComponent ehmc = EventHandlerManagerComponent.Cast(entity.FindComponent(EventHandlerManagerComponent));
+  if (ehmc)
+      ehmc.RegisterScriptHandler("OnSomeNativeEvent", this, OnSomeNativeEvent);
+  ```
+- The individual gameplay events previously listed here (`OnADSChanged`, `OnInspectionModeChanged`, `OnCompartmentEntering/Entered/Left/Leaving`, `OnLightStateChanged`, `OnTurretReload`, `OnWeaponChanged`/`OnMuzzleChanged`/`OnAmmoCountChanged`/`OnMagazineChanged`, `OnProjectileShot`/`OnFiremodeChanged`/`OnWeaponAttachmentChanged`/`OnZeroingChanged`, `OnDayStart`/`OnNightStart`, `OnGrenadeThrown`) are real, but at least the damage-related ones do NOT live on `EventHandlerManagerComponent` — `GetOnDamage()`, `GetOnDamageStateChanged()`, `GetOnDamageOverTimeAdded()`, `GetOnDamageOverTimeRemoved()` are confirmed to live directly on `SCR_DamageManagerComponent` (see `reforger-wiki-damage-system`). The remaining events in this list were NOT individually re-verified in this pass — treat their exact owning component as unconfirmed until checked against source, rather than assuming they hang off `EventHandlerManagerComponent`.
 
 **IEntity Event Methods (full list)**
 - `EOnInit` — entity allocated and initialised
@@ -93,11 +91,18 @@ class ARGA_MyManager : Managed
     }
 }
 
-// EventHandlerManagerComponent subscription
+// EventHandlerManagerComponent subscription — by event NAME, not a GetOnXXX() getter
 EventHandlerManagerComponent ehmc = EventHandlerManagerComponent.Cast(
     entity.FindComponent(EventHandlerManagerComponent));
 if (ehmc)
-    ehmc.GetOnDestroyed().Insert(OnEntityDestroyed);
+    ehmc.RegisterScriptHandler("OnSomeNativeEvent", this, OnSomeNativeEvent);
+
+// For damage events specifically, use SCR_DamageManagerComponent directly instead —
+// see reforger-wiki-damage-system.
+SCR_DamageManagerComponent dmgMgr = SCR_DamageManagerComponent.Cast(
+    entity.FindComponent(SCR_DamageManagerComponent));
+if (dmgMgr)
+    dmgMgr.GetOnDamageStateChanged().Insert(OnEntityDamageStateChanged);
 
 // ScriptInvoker getter lazy-init pattern (inside a class)
 protected ref ScriptInvokerVoid m_OnSomethingHappened;
@@ -120,4 +125,5 @@ void TriggerSomething()
 ## References
 
 - PDF: `Event Handlers – Arma Reforger - Bohemia Interactive Community.pdf`
+- Doxygen coverage gap: this Doxygen build only documents the generic Enfusion engine (`Core`/`GameLib`/`WorkbenchCommon`). `EventHandlerManagerComponent` lives in the Arma Reforger game-specific layer (`Game/`), which is NOT included in the Doxygen HTML at all — it was verified instead against the raw generated source `scripts/Game/generated/Events/EventHandlerManagerComponent.c` (Reforger_1.6.0.119 snapshot, the only one in this repo with the full `Game/` tree).
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Event_Handlers`
