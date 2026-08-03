@@ -134,27 +134,6 @@ Regardless of which spokes load, the hub applies these rules on every `.c` file:
 
 ---
 
-## Cómo funciona — Hub y Spokes
-
-La familia usa una arquitectura **Hub-and-Spoke**:
-
-El hub (`reforger-skill`) se carga automáticamente en cualquier archivo `.c`. Los 43 spokes se cargan encima del hub cuando palabras clave del dominio aparecen en el contexto. No hay activación manual — el LLM elige la combinación correcta según lo que estés trabajando.
-
-### El hub siempre aplica
-
-- Prefijo `ARGA_` en clases y archivos
-- Brace de cierre con `;`
-- Prefijo `ARGA_E` en enums
-- Ubicación de archivos en `scripts\Game\`
-
-### Los spokes se activan por dominio
-
-Cada spoke cubre un área específica del scripting. Cuando el LLM detecta términos como `RplRpc`, `ScriptInvoker`, `BaseContainer`, `EDamageType`, etc., carga el spoke correspondiente además del hub.
-
-Ver las tablas en inglés arriba para la lista completa de triggers por spoke.
-
----
-
 ## Audit status
 
 All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, which only cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process.
@@ -165,4 +144,4 @@ Full findings and reasoning — including every corrected class name, signature,
 
 ## License
 
-MIT
+AGPL-3.0
