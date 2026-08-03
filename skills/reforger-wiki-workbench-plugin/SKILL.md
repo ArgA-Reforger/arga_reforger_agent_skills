@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: arga-reforger-team
-  version: "1.2.0"
+  version: "1.3.0"
   triggers:
     - "WorkbenchPlugin"
     - "WorldEditor"
@@ -27,9 +27,9 @@ Load this skill when writing or reviewing Workbench editor plugin scripts: custo
 - NEVER import or depend on gameplay classes (like `SCR_BaseGameMode`) inside a plugin class — they may not exist in the editor context.
 - Use `[WorkbenchPluginAttribute]` to register a class as a Workbench plugin; without it the class is invisible to the editor.
 
-**`WorkbenchPlugin` anatomy — CORRECTED against Doxygen (`_workbench_plugin_8c_source.html`)**
-- The real base class `WorkbenchPlugin : Managed` only declares 4 `event` methods: `Run()`, `RunCommandline()`, `Configure()`, `OnResourceContextMenu(notnull array<ResourceName> resources)`.
-- `CanRun()` and `GetAttributes()` do NOT appear anywhere in the Doxygen corpus for this engine build — they were not found on `WorkbenchPlugin` or any related class. Treat both as unverified/likely incorrect until confirmed against a live Workbench install; do not rely on them to gate menu visibility.
+**`WorkbenchPlugin` anatomy — CONFIRMED against the full generated class body (arexplorer.zeroy.com, `_workbench_plugin_8c_source.html`, `scripts/GameLib/generated/WorkbenchAPI/Plugins/WorkbenchPlugin.c`)**
+- The complete engine-generated class is: `class WorkbenchPlugin : Managed { private void WorkbenchPlugin(); private void ~WorkbenchPlugin(); event void Run(); event void RunCommandline(); event void Configure(); event void OnResourceContextMenu(notnull array<ResourceName> resources); }` — nothing else.
+- `CanRun()` and `GetAttributes()` are CONFIRMED NOT TO EXIST — this is not a search gap, the full class body above is exhaustive (generated file, "Do not modify"). Do not use them to gate menu visibility or plugin availability; there is no such hook.
 - `Run()` is the entry point — called when the user triggers the plugin via menu or shortcut. Confirmed real.
 - `RunCommandline()` — override for command-line-invoked execution (seen in real plugins like `FlowmapTool`).
 - `Configure()` — override for a plugin's settings/configuration entry point (seen in `ViewOrientationTool`).
@@ -108,9 +108,8 @@ class ARGA_SetupPlugin : WorkbenchPlugin
         api.EndEntityAction("ARGA_SetupPlugin_Configure");
     }
 
-    // NOTE: CanRun() was not found on WorkbenchPlugin (or elsewhere) in either the local
-    // Doxygen dump or arexplorer.zeroy.com — still unverified, do not assume this hook exists
-    // without confirming against current source or a live Workbench install.
+    // NOTE: CanRun() does NOT exist on WorkbenchPlugin — confirmed against the full generated
+    // class body (arexplorer.zeroy.com). There is no such hook; do not use it.
     // override bool CanRun() { ... }
 
     protected void ConfigureEntity(WorldEditorAPI api, IEntitySource src)
@@ -143,7 +142,7 @@ editorModule.Save();
 ## References
 
 - PDF: `Workbench Plugin – Arma Reforger - Bohemia Interactive Community.pdf`
-- Doxygen (local dump, source of truth for `WorkbenchPlugin` base itself): `_workbench_plugin_8c_source.html` — `Run`/`RunCommandline`/`Configure`/`OnResourceContextMenu`. `CanRun`/`GetAttributes` still not found anywhere, in either the local dump or arexplorer.
+- arexplorer.zeroy.com: `_workbench_plugin_8c_source.html` (`scripts/GameLib/generated/WorkbenchAPI/Plugins/WorkbenchPlugin.c`) — full generated class body confirms `Run`/`RunCommandline`/`Configure`/`OnResourceContextMenu` are the only members; `CanRun`/`GetAttributes` confirmed absent (not a search gap — exhaustive class listing).
 - arexplorer.zeroy.com (covers `scripts/Game`/`GameCode`, unlike the local dump — see reference memory `reforger/arexplorer-online-doxygen`): `_world_editor_a_p_i_8c_source.html` — real `WorldEditorAPI` selection/action/property API (`BeginEntityAction`/`EndEntityAction`, `GetSelectedEntity`/`GetSelectedEntitiesCount`, `SetVariableValue`, etc.) that replaced the previously-guessed `BeginAction`/`EndAction`/`GetSelection`/`ModifyProperty` names.
 - Wiki: `https://community.bistudio.com/wiki/Arma_Reforger:Workbench_Plugin`
 - Related spokes: `reforger-wiki-scripting-first-steps` (Workbench setup), `reforger-wiki-entity` (entity API), `reforger-wiki-base-container` (`SetVariableValue` already documented there)

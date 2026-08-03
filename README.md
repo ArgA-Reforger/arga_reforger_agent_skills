@@ -113,7 +113,7 @@ skills/
 | `reforger-wiki-damage-effects` | `DamageEffect`, `SCR_DamageEffect`, `OnEffectAdded`, `HandleConsequences` |
 | `reforger-wiki-scripting-modding` | `modded` keyword, mod priority, addon dependency graph |
 | `reforger-wiki-scripting-example` | scripting example, `SCR_TW_`, end-to-end implementation |
-| `reforger-wiki-temporary-feature` | feature flag, temporary override ⚠️ (`SCR_TemporaryFeature` confirmed NOT to exist — see skill) |
+| `reforger-wiki-temporary-feature` | feature flag, temporary override |
 | `reforger-wiki-best-practices` | best practices, null safety, SRP, mod-friendliness |
 | `reforger-wiki-dos-donts` | anti-patterns, forbidden patterns, scripting pitfalls |
 | `reforger-wiki-performance` | `CallLater`, `GetTickCount`, GC pressure, profiling |
@@ -157,12 +157,9 @@ Ver las tablas en inglés arriba para la lista completa de triggers por spoke.
 
 ## Audit status
 
-All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, which only cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process. Notable outcomes:
+All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, which only cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process.
 
-- **Confirmed fabricated, do not use**: `SCR_TemporaryFeature`/`ETemporaryFeature` (in `reforger-wiki-temporary-feature`) and `SCR_ConfigHelperT<T>.GetConfigObject()` (previously referenced by `reforger-wiki-scripting-conf`/`reforger-wiki-base-container`) — neither exists anywhere in either source.
-- **Major rewrites**: `reforger-wiki-damage-effects` (the `SCR_DamageEffectComponent` class and its `OnActivate`/`OnDeactivate` callbacks don't exist — real hierarchy is `SCR_DamageEffect` with `OnEffectAdded`/`OnEffectApplied`/`HandleConsequences`/`OnEffectRemoved`) and `reforger-wiki-serialisation` (`SCR_JsonSaveContext`/`SCR_BinSaveContext` are deprecated backwards-compat aliases — current classes are `JsonSaveContext`/`BinarySaveContext` with `SaveToString()`/`LoadFromString()`).
-- **Corrected signatures/behaviour**: `reforger-wiki-event-handlers` (real API is `RaiseEvent`/`RegisterScriptHandler` by string name, not per-event getters), `reforger-wiki-damage-system` (`OnDamage`/`OnDamageStateChanged`/`HandleDamage` take different parameters than originally documented), `reforger-wiki-workbench-plugin` (`BeginEntityAction`/`EndEntityAction`/`GetSelectedEntity` via `WorldEditorAPI`, not `BeginAction`/`GetSelection`), `reforger-wiki-rest-api` (PUT/DELETE and custom headers ARE supported; current callback API is `SetOnSuccess`/`SetOnError`, not the obsolete `OnSuccess`/`OnError`/`OnTimeout` overrides), `reforger-wiki-json-api-struct` (`StoreInteger` not `StoreInt`; `OnBufferReady()` doesn't exist).
-- Full findings and reasoning are archived in this project's Engram memory under topic keys `reforger/skills-audit-batch1`, `batch2`, `batch3`, and the `reforger/skills-reverify-arexplorer*` / `reforger/skills-audit-final-16` follow-ups.
+Full findings and reasoning — including every corrected class name, signature, and callback — are archived in this project's Engram memory under topic keys `reforger/skills-audit-batch1`, `batch2`, `batch3`, and the `reforger/skills-reverify-arexplorer*` / `reforger/skills-audit-final-16` follow-ups.
 
 ---
 
