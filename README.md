@@ -139,6 +139,8 @@ Regardless of which spokes load, the hub applies these rules on every `.c` file:
 All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, which only cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process.
 
 > **Note (2026-08-18):** that audit ran when the only local source carrying `Game/`/`GameCode/` was the `Reforger_1.6.0.119` snapshot. That is no longer the case: `Reforger_1.8.0.10` has since been extracted in full — engine **and** gameplay, 4434 `SCR_*` files — and is the **base source** for any new lookup. The references to 1.6.0.119 below record what each signature was verified against at the time, not where to look today.
+>
+> **Note (2026-09-03):** `Reforger_1.8.0.13` (matching the currently installed game build) is now the **base source** for any new lookup, superseding 1.8.0.10 above. It ships engine and gameplay (5809 `.c`, 4433 `SCR_*`) but lacks `Core/`, `WorkbenchCommon/`, `WorkbenchGameCommon/` — fall back to `Reforger_1.8.0.10` for those three folders only.
 
 Full findings and reasoning — including every corrected class name, signature, and callback — are archived in this project's Engram memory under topic keys `reforger/skills-audit-batch1`, `batch2`, `batch3`, and the `reforger/skills-reverify-arexplorer*` / `reforger/skills-audit-final-16` follow-ups.
 
