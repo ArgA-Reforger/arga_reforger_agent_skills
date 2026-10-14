@@ -21,7 +21,7 @@ metadata:
 
 ## Activation Contract
 
-Load this skill when a question is about how vanilla Arma Reforger classes, components, prefabs, configs, particles or sounds look or behave, or when you must check whether vanilla already implements something. Do not answer such questions from memory: read the real file and cite it. Does NOT cover writing Enforce Script (see the other spokes) and does NOT cover resolving `{GUID}` values to paths.
+Load this skill when a question is about how vanilla Arma Reforger classes, components, prefabs, configs, particles or sounds look or behave, or when you must check whether vanilla already implements something. Do not answer such questions from memory: read the real file and cite it. Does NOT cover writing Enforce Script (see the other spokes). Resolving `{GUID}` values to paths is covered by `reforger-guid-resolution`.
 
 ## Hard Rules
 
@@ -102,5 +102,5 @@ Worked example (3 commands): "does vanilla implement AI suppressive fire?" -> `g
 ## References
 
 - `enfusion_tools` CLI: `https://github.com/landaire/enfusion_tools`
-- Related spokes: `reforger-wiki-doxygen` (documenting API, not reading it), `reforger-wiki-config-class`, `reforger-wiki-resource-usage`, `reforger-wiki-multiplayer`
+- Related spokes: `reforger-guid-resolution` (GUID <-> path), `reforger-wiki-doxygen` (documenting API, not reading it), `reforger-wiki-config-class`, `reforger-wiki-resource-usage`, `reforger-wiki-multiplayer`
 - Verification note: `data007.pak` script count (5809), folder breakdown, the `**/*Suppress*.c` glob (15 hits) and the `SCR_AISuppressBehavior` declaration at line 5 were confirmed against build 1.8.0.13.

@@ -1,6 +1,6 @@
 # ArgA Reforger agent skills
 
-A family of 45 developer skills for writing Arma Reforger Enforce Script with an LLM — covering the full scripting surface from language basics to multiplayer replication, damage systems, and Workbench plugins.
+A family of 46 developer skills for writing Arma Reforger Enforce Script with an LLM — covering the full scripting surface from language basics to multiplayer replication, damage systems, and Workbench plugins.
 
 ---
 
@@ -18,7 +18,7 @@ The family uses a **Hub-and-Spoke** architecture:
 └──────────┬──────────┘
            │  delegates domain questions to ↓
     ┌──────┴───────────────────────────────────┐
-    │  44 spoke skills                         │
+    │  45 spoke skills                         │
     │  each loads when its keywords appear     │
     │                                          │
     │  reforger-wiki-arc        (ARC, Managed) │
@@ -41,7 +41,8 @@ skills/
   reforger-wiki-arc/SKILL.md
   reforger-wiki-multiplayer/SKILL.md
   reforger-source-recon/SKILL.md
-  ... (44 spoke SKILL.md files)
+  reforger-guid-resolution/SKILL.md
+  ... (45 spoke SKILL.md files)
 ```
 
 ---
@@ -126,6 +127,7 @@ skills/
 | Skill | Loads when you mention… |
 |---|---|
 | `reforger-source-recon` | `vanilla class`, `vanilla prefab`, `does vanilla already`, `enfusion_tools`, `.pak`, `data007` |
+| `reforger-guid-resolution` | `GUID`, `{GUID}`, `resourceDatabase.rdb`, `GUID to path`, `path to GUID` |
 
 ---
 
