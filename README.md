@@ -129,6 +129,8 @@ skills/
 | `reforger-source-recon` | `vanilla class`, `vanilla prefab`, `does vanilla already`, `enfusion_tools`, `.pak`, `data007` |
 | `reforger-guid-resolution` | `GUID`, `{GUID}`, `resourceDatabase.rdb`, `GUID to path`, `path to GUID` |
 
+**External tool required by `reforger-source-recon`:** [`enfusion_tools`](https://github.com/landaire/enfusion_tools), an open-source (MIT) Rust CLI that reads Arma Reforger `.pak` archives by index (`list`, `glob`, `grep`, `cat`, `info`, `extract`) without unpacking them. It needs only the installed game, not the modding Tools. Get prebuilt binaries from the repository's Releases tab, or build it with `cargo build --release`. `reforger-guid-resolution` does not need it: it only reads `resourceDatabase.rdb` with a small Python script.
+
 ---
 
 ## What the hub always enforces
