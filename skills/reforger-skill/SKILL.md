@@ -75,10 +75,12 @@ The following spoke skills cover specific domains. They are loaded alongside thi
 | `reforger-wiki-performance` | `CallLater`, `GetTickCount`, `performance optimization`, `GC pressure`, `profiling` | Frame budget, deferred calls, allocation avoidance, spatial query throttling |
 | `reforger-wiki-doxygen` | `doxygen comment`, `@param`, `@return`, `@code`, `API documentation` | Doxygen comment syntax and conventions for Enforce Script API docs |
 | `reforger-wiki-workbench-plugin` | `WorkbenchPlugin`, `WorldEditor`, `editor script`, `OnMenuOpened`, `EditorMenu` | Workbench editor plugins: menus, tools, undo/redo, editor-side script utilities |
+| `reforger-source-recon` | `vanilla class`, `vanilla prefab`, `does vanilla already`, `enfusion_tools`, `.pak`, `data007` | Method for reading real vanilla scripts and assets from packed archives with citations |
 
 ## References
 
 - `scripts\` — Reforger scripts source of truth
+- `reforger-source-recon` — how to read vanilla scripts and assets from the packed archives when no extracted tree is available
 - `https://community.bistudio.com/wiki/Category:Arma_Reforger/Modding` — Bohemia Modding
 - `https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/` — Arma Reforger Script API
 - `https://community.bistudio.com/wikidata/external-data/arma-reforger/EnfusionScriptAPIPublic/` — Enfusion Script API
