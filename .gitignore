@@ -20,3 +20,11 @@ config.json.prod
 .atl
 .antigravitycli
 openspec
+
+# AI tooling — machine-specific paths, not shareable
+.atl/
+# AI and Local Tools
+.claude/
+.pi/
+
+.codegraph/
