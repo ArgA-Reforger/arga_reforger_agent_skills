@@ -145,7 +145,7 @@ Regardless of which spokes load, the hub applies these rules on every `.c` file:
 
 ## Audit status
 
-All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, which only cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process.
+All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, `Doxgen/html_1.8.0.13/`, which cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process.
 
 Full findings and reasoning — including every corrected class name, signature, and callback — are archived in this project's Engram memory under topic keys `reforger/skills-audit-batch1`, `batch2`, `batch3`, and the `reforger/skills-reverify-arexplorer*` / `reforger/skills-audit-final-16` follow-ups.
 
