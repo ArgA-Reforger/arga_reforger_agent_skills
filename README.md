@@ -1,6 +1,6 @@
 # ArgA Reforger agent skills
 
-A family of 44 developer skills for writing Arma Reforger Enforce Script with an LLM — covering the full scripting surface from language basics to multiplayer replication, damage systems, and Workbench plugins.
+A family of 46 developer skills for writing Arma Reforger Enforce Script with an LLM — covering the full scripting surface from language basics to multiplayer replication, damage systems, and Workbench plugins.
 
 ---
 
@@ -18,7 +18,7 @@ The family uses a **Hub-and-Spoke** architecture:
 └──────────┬──────────┘
            │  delegates domain questions to ↓
     ┌──────┴───────────────────────────────────┐
-    │  43 wiki spoke skills                    │
+    │  45 spoke skills                         │
     │  each loads when its keywords appear     │
     │                                          │
     │  reforger-wiki-arc        (ARC, Managed) │
@@ -40,7 +40,9 @@ skills/
   reforger-wiki-oop-basics/SKILL.md
   reforger-wiki-arc/SKILL.md
   reforger-wiki-multiplayer/SKILL.md
-  ... (43 spoke SKILL.md files)
+  reforger-source-recon/SKILL.md
+  reforger-guid-resolution/SKILL.md
+  ... (45 spoke SKILL.md files)
 ```
 
 ---
@@ -120,6 +122,15 @@ skills/
 | `reforger-wiki-doxygen` | `@param`, `@return`, `@code`, API documentation |
 | `reforger-wiki-workbench-plugin` | `WorkbenchPlugin`, `WorldEditor`, editor menus, undo/redo |
 
+### Source Research
+
+| Skill | Loads when you mention… |
+|---|---|
+| `reforger-source-recon` | `vanilla class`, `vanilla prefab`, `does vanilla already`, `enfusion_tools`, `.pak`, `data007` |
+| `reforger-guid-resolution` | `GUID`, `{GUID}`, `resourceDatabase.rdb`, `GUID to path`, `path to GUID` |
+
+**External tool required by `reforger-source-recon`:** [`enfusion_tools`](https://github.com/landaire/enfusion_tools), an open-source (MIT) Rust CLI that reads Arma Reforger `.pak` archives by index (`list`, `glob`, `grep`, `cat`, `info`, `extract`) without unpacking them. It needs only the installed game, not the modding Tools. Get prebuilt binaries from the repository's Releases tab, or build it with `cargo build --release`. `reforger-guid-resolution` does not need it: it only reads `resourceDatabase.rdb` with a small Python script.
+
 ---
 
 ## What the hub always enforces
@@ -136,7 +147,7 @@ Regardless of which spokes load, the hub applies these rules on every `.c` file:
 
 ## Audit status
 
-All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, which only cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process.
+All 43 spoke skills have been cross-verified against real engine/game source — the local Doxygen dumps (`Doxgen/html_1.7.0.49/`, `Doxgen/html_1.7.0.54/`, `Doxgen/html_1.8.0.13/`, which cover the generic engine layer: `Core`/`GameLib`/`WorkbenchCommon`) and [arexplorer.zeroy.com](https://arexplorer.zeroy.com/) (a live, Doxygen-generated site that additionally covers the Arma Reforger game-specific layer, `scripts/Game`/`GameCode`, which the local dumps do not index). Skills with a `version` above `1.0.0` in their frontmatter received at least one correction from this process.
 
 > **Note (2026-08-18):** that audit ran when the only local source carrying `Game/`/`GameCode/` was the `Reforger_1.6.0.119` snapshot. That is no longer the case: `Reforger_1.8.0.10` has since been extracted in full — engine **and** gameplay, 4434 `SCR_*` files — and is the **base source** for any new lookup. The references to 1.6.0.119 below record what each signature was verified against at the time, not where to look today.
 >
